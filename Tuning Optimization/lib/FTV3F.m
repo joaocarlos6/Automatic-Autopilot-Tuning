@@ -41,9 +41,9 @@ if WithTail==1   %UTAIL
     elseif isnumeric(CGConfig)
         xCgLocMacBWB = CGConfig;% PERCENT MAC BWB
         % From TMI release August 16 2024, FTV3F UTAIL TMI CALCULATOR_REV0.xlsx
-        Weight            = 14.6170 * 2.2;% Lbs 
-        ZCG               = 0.0090 / 0.02540 * (ZCGScale+1);% In inches
-        IXX               = 1.37401 * 3417.17 * (1+InertiaScale);% In-lbs
+        Weight            = 14.8247 * 2.2;% Lbs 
+        ZCG               = 0.0096 / 0.02540 * (ZCGScale+1);% In inches
+        IXX               = 1.3748 * 3417.17 * (1+InertiaScale);% In-lbs
         IYY               = ((-0.0658*xCgLocMacBWB) + 5.37774) * 3417.17 * (1+InertiaScale);% In-lbs
         IZZ               = ((-0.0658*xCgLocMacBWB) + 6.61917) * 3417.17 * (1+InertiaScale);% In-lbs
         IXZ               = 0.0680 * 3417.17 * (1+InertiaScale);% In-lbs
