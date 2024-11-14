@@ -149,14 +149,14 @@ PitchMin = -PitchMax;
 %% Pitch Control
 ElevatorTrim    = -8.0; % default: -5
 
-PitchMaxAccel   = 1.10; % rad/s^2; used in rate limiter
-PitchBandwidth  = 1.0; %Hz
+PitchMaxAccel   = 1.1; %1.50; % rad/s^2; used in rate limiter
+PitchBandwidth  = 0.7; %0.75; %Hz
 
 % G62
-PitchRateError2Accel    = 3; 
-PitchRateErrorInt2Accel = 2; 
+PitchRateError2Accel    = 2.5; %2.8; 
+PitchRateErrorInt2Accel = 5.9; %4.5; 
 PitchDampingTrust       = 0.0;
-PitchStiffnessTrust     = 0.5; %0.25; 
+PitchStiffnessTrust     = 0.7; %0.25; 
 
 %Vehicle Properties
 ElevatorPower   = -0.00205983; %-0.00205983; %-0.002106; % /deg 

@@ -12,7 +12,6 @@ function [cost, StepResponse] = GA_tuning_function(k)
     assignin('base','KI_Pitch',k(2));
     assignin('base','K_TS',k(3));
     assignin('base','PB',k(4));
-    assignin('base','MaxPitchAccel',k(5));
 
     warning('off','all')
     %Run simulation
@@ -26,6 +25,7 @@ function [cost, StepResponse] = GA_tuning_function(k)
     end
     
     clear output_cmd_text
+    rmdir('slprj','s')
 
 end
 
