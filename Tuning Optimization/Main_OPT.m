@@ -59,9 +59,9 @@ pilotTime = 15; % s - time of maneuver
 trimTime = 5; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
-Q = 10000;
-R = 0.02;
-C = 0.001;
+Q = 5;
+R = 1;
+C = 10;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -89,8 +89,8 @@ gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05];
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [1, 3, 0.2, 0.6];
-ub.pitch = [5, 8, 0.8, 1.2];
+lb.pitch = [0.2, 0.2, 0.1, 1];
+ub.pitch = [1, 1.1, 0.6, 5];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -142,7 +142,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [2.8 4.5 0.7 0.75];
+    Initialparam = [0.55 0.75 0.3 2];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
@@ -184,7 +184,7 @@ for i=1:1 %Repeat optimization for all axis
 
     plotname = ['Performance comprison of optimized vs initial gains for ',axis_name{i},'-rate'];
     figure('Name',plotname)
-    plot([0 20 20.02 30],[4.97 4.97 6.97 6.97],'LineWidth',1.5)
+    plot([0 20 20.02 30],[0 0 1.3 1.3],'LineWidth',1.5)
     hold on
     plot(StepResponse.(axis_name{i}),'LineWidth',1.5)
     plot(StepResponseIni.(axis_name{i}),'LineWidth',1.5)
