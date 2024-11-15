@@ -129,12 +129,12 @@ AltMin = 0;
 AltMaxAccel = 2.0; %m/s/s
 
 % G62
-AltRateError2Pitch      = 0.55; 
-AltRateErrorInt2Pitch   = 0.75; 
-AltRateCmd2Pitch        = 0.3;
+AltRateError2Pitch      = 0.45; 
+AltRateErrorInt2Pitch   = 1; 
+AltRateCmd2Pitch        = 0.45;
 
 %Low Pass Filters
-AltRateLpfCutOff    = 2; %Hz
+AltRateLpfCutOff    = 4.85; %Hz
 Fp_AltRate          = 0.55*2*pi*AltRateLpfCutOff*dt;
 
 % Used in INS
@@ -149,14 +149,14 @@ PitchMin = -PitchMax;
 %% Pitch Control
 ElevatorTrim    = -8.0; % default: -5
 
-PitchMaxAccel   = 1.1; %1.50; % rad/s^2; used in rate limiter
-PitchBandwidth  = 0.7; %0.75; %Hz
+PitchMaxAccel   = 1.5; %1.50; % rad/s^2; used in rate limiter
+PitchBandwidth  = 0.65; %0.75; %Hz
 
 % G62
 PitchRateError2Accel    = 2.5; %2.8; 
-PitchRateErrorInt2Accel = 5.9; %4.5; 
+PitchRateErrorInt2Accel = 6.15; %4.5; 
 PitchDampingTrust       = 0.0;
-PitchStiffnessTrust     = 0.7; %0.25; 
+PitchStiffnessTrust     = 0.7; %0.7; 
 
 %Vehicle Properties
 ElevatorPower   = -0.00205983; %-0.00205983; %-0.002106; % /deg 

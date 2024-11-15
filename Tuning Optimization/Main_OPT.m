@@ -14,7 +14,7 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 %OPTIMIZATION SETTINGS
 gaopt.PopulationSize = 200;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 18*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 17*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -89,7 +89,7 @@ gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05];
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [1, 3, 0.2, 0.6];
+lb.pitch = [1, 4, 0.2, 0.6];
 ub.pitch = [5, 8, 0.8, 1.2];
 
 % lb.yaw = [0, 0, 0];
@@ -142,7 +142,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [2.8 4.5 0.7 0.75];
+    Initialparam = [2.5 6.15 0.7 0.65];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
