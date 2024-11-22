@@ -153,10 +153,10 @@ PitchMaxAccel   = 1.5; %1.50; % rad/s^2; used in rate limiter
 PitchBandwidth  = 0.65; %0.75; %Hz
 
 % G62
-PitchRateError2Accel    = 2.5; %2.8; 
-PitchRateErrorInt2Accel = 6.15; %4.5; 
+PitchRateError2Accel    = 2.65; %2.8; 
+PitchRateErrorInt2Accel = 5.7; %4.5; 
 PitchDampingTrust       = 0.0;
-PitchStiffnessTrust     = 0.7; %0.7; 
+PitchStiffnessTrust     = 0.6; %0.7; 
 
 %Vehicle Properties
 ElevatorPower   = -0.00205983; %-0.00205983; %-0.002106; % /deg 
