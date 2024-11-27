@@ -5,16 +5,16 @@ clc
 addpath(genpath("lib\"))
 
 %% OPTIONS
-optimizationName = 'Piccolo_FTV3F_AFT_CG';
+optimizationName = 'Piccolo_FTV3F_AFT_CG_cont';
 dev_mode = true;        %Setting this to true enables developer mode which disables some features making it faster to run the code
 % flag_optfilter = 0;     %1-Optimize DGYRO low pass filter, 0-No filter optimization of DGYRO
 % flag_noise = 1;         %0-to disable noise, 1-to enable noise
 % flag_NoiseLvl= 1;       %0-correct sensor noise levels for each axis, 1-highest level of sensor noise, 2-increase sensor noise x5 
 
 %OPTIMIZATION SETTINGS
-gaopt.PopulationSize = 120;                      %Size of the population.
+gaopt.PopulationSize = 200;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 16*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 8*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -25,7 +25,7 @@ WithTail = 1;
 % Vehicle
 FTV                        = 3; % Vehicle Generation 
 vehicleType                = "F";
-testPlans.CG                = [ 61.61 ];
+testPlans.CG                = [ 61.6 ];
 testPlans.mass              = [ "7P" ];    % Placeholder for 7P
 testPlans.inertiaScale      = [0];         % Inertia scale
 
@@ -34,7 +34,7 @@ testPlans.speedOffset       = [0]; % Offset to approach speed target (m/s)
 testPlans.rolloutTrackOffset= [0]; % At Touchdown offset track rollout control tracks (m)
 
 % Terrain
-testPlans.terrainElevation  = [373];   % Terrain elevation settings (ft); Dolbeau = 373, Foremost = 2904,
+testPlans.terrainElevation  = [1496];   % Terrain elevation settings (ft); Dolbeau = 373, Foremost = 2904,
 testPlans.terrainOffset     = [0];     % Offset applied to sim terrain height (simulate elevation knowledge errors)
 
 % Conditions
@@ -59,9 +59,10 @@ pilotTime = 15; % s - time of maneuver
 trimTime = 5; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
+L = 1000;
 Q = 10000;
-R = 0.4;
-C = 0.1;
+R = 0.05;
+C = 0.01;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -83,14 +84,14 @@ axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
 %Parameter resolution [Kp ki kd pitchbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.05];
+gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [1, 3, 0.25];
-ub.pitch = [5, 8, 0.9];
+lb.pitch = [1, 3, 0.2, 0.2];
+ub.pitch = [4, 8, 0.8, 0.8];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -142,7 +143,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [2.65 5.7 0.6];
+    Initialparam = [2.35 6.7 0.65 0.5];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
@@ -182,20 +183,46 @@ for i=1:1 %Repeat optimization for all axis
     %RUN SIMULATION AND SAVE PLOTS OF IMPROVED RESULTS
     [~,StepResponse.(axis_name{i})] = GA_tuning_function(opt_gains.(axis_name{i}).*gain_resolution);
 
-    plotname = ['Performance comprison of optimized vs initial gains for ',axis_name{i},'-rate'];
-    figure('Name',plotname)
-    plot([0 20 20.02 30],[4.97 4.97 6.97 6.97],'LineWidth',1.5)
+    plotname1 = ['Performance comprison of optimized vs initial gains for ',axis_name{i},'-angle'];
+    figure('Name',plotname1)
+    plot(StepResponseIni.pitch.Time,StepResponseIni.pitch.Data(:,3),'LineWidth',1.5)
     hold on
-    plot(StepResponse.(axis_name{i}),'LineWidth',1.5)
-    plot(StepResponseIni.(axis_name{i}),'LineWidth',1.5)
+    plot(StepResponse.pitch.Time,StepResponse.pitch.Data(:,4),'LineWidth',1.5)
+    plot(StepResponseIni.pitch.Time,StepResponseIni.pitch.Data(:,4),'LineWidth',1.5)
     text(0.1,0.4,{'Optm Gains:',['Kp=' num2str(opt_gains.(axis_name{i})(1))],['Ki=' num2str(opt_gains.(axis_name{i})(2))],['Kts=' num2str(opt_gains.(axis_name{i})(3))]})
     ylabel('Pitch (deg)');
-    title(plotname);
+    title(plotname1);
     legend('Setpoint', 'Optimized response','Initial response')
     grid on 
     grid minor
-    saveas(gcf, [plotsFolderPath '\' plotname '.png']);
-    saveas(gcf, [plotsFolderPath '\' plotname '.fig']);
+    saveas(gcf, [plotsFolderPath '\' plotname1 '.png']);
+    saveas(gcf, [plotsFolderPath '\' plotname1 '.fig']);
+
+    plotname2 = ['Performance comprison of optimized vs initial gains for ',axis_name{i},'-rate'];
+    figure('Name',plotname2)
+    subplot(2,1,1)
+    plot(StepResponseIni.pitch.Time,StepResponseIni.pitch.Data(:,1),'LineWidth',1.5)
+    hold on
+    plot(StepResponseIni.pitch.Time,StepResponseIni.pitch.Data(:,2),'LineWidth',1.5)
+    ylabel('Pitch Rate (deg/s)');
+    title('Initial response')
+    legend('Setpoint', 'Response')
+    grid on 
+    grid minor
+
+    subplot(2,1,2)
+    plot(StepResponse.pitch.Time,StepResponse.pitch.Data(:,1),'LineWidth',1.5)
+    hold on
+    plot(StepResponse.pitch.Time,StepResponse.pitch.Data(:,2),'LineWidth',1.5)
+    text(0.1,0.4,{'Optm Gains:',['PB=' num2str(opt_gains.(axis_name{i})(4))]})
+    ylabel('Pitch Rate (deg/s)');
+    title('Optimized response')
+    legend('Setpoint', 'Response')
+    grid on 
+    grid minor
+    sgtitle(plotname2);
+    saveas(gcf, [plotsFolderPath '\' plotname2 '.png']);
+    saveas(gcf, [plotsFolderPath '\' plotname2 '.fig']);
 
     % %Run step simulation for last generation 
     % plotname = ['Step response of last GA generation for ',axis_name{i},'-rate'];
