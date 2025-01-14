@@ -8,9 +8,9 @@
 
 %% close workspace
 % clearvars;
-SimObj = [];
-clearvars SimObj
-clear mex
+% SimObj = [];
+% clearvars SimObj
+% clear mex
 %clear all
 % rmpath(strcat(FDMPath,FDMVer));
 % rmpath(strcat(FDMPath,FDMVer,'\bin'));

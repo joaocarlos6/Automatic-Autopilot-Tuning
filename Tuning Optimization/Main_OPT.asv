@@ -59,9 +59,9 @@ pilotTime = 20; % s - time of maneuver
 trimTime = 10; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
-Q = 1000; %10000;
-R = 1; %0.02;
-C = 0.005; %0.001;
+Q = 10000;
+R = 0.02;
+C = 0.001;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -82,15 +82,15 @@ end
 axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
-%Parameter resolution [Kp ki kdt kst pitchbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05 1/0.05];
+%Parameter resolution [Kp ki kd pitchbandwidth ]
+gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [1, 1, 0, 0, 0.5];
-ub.pitch = [5, 5, 1, 1, 1.5];
+lb.pitch = [1, 4, 0.2, 0.6];
+ub.pitch = [5, 8, 0.8, 1.2];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -138,11 +138,11 @@ for i=1:1 %Repeat optimization for all axis
     % Q = Q_list(i);
     % R = R_list(i);
     % C = C_list(i);
-    StopTime = 50;
+    StopTime = 30;
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [1.2 1.75 0.3 0.3 0.8];
+    Initialparam = [2.5 6.15 0.7 0.65];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
