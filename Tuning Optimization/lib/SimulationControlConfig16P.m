@@ -9,7 +9,7 @@ if ~exist('NoiseStd','var')
     SimulationSensorConfig;
 end
 
-PiccoloGainVersion  = "G73";
+PiccoloGainVersion  = "G74";
 ControlAllocation   = "M2 FTD";
 modelScale          = '16P5';
 
@@ -152,17 +152,17 @@ PitchMin    = -PitchMax;
 ElevatorTrim =-3.5; % default: -5
 
 %G72
-PitchRateError2Accel    = 1.2; % 
-PitchRateErrorInt2Accel = 1.75; % 
-PitchDampingTrust       = 0.3;
-PitchStiffnessTrust     = 0.3;
+PitchRateError2Accel    = 2.65; % 
+PitchRateErrorInt2Accel = 1.65; % 
+PitchDampingTrust       = 0.45;
+PitchStiffnessTrust     = 1;
 
-PitchMaxAccel   = 1.0; % rad/s^2; used in rate limiter
+PitchMaxAccel   = 1; % rad/s^2; used in rate limiter
 
 %Vehicle Properties
-ElevatorPower   = -0.002209; % /deg
+ElevatorPower   = -0.002060; % /deg
 PitchDamping    = -1.2608; % Cm/qbar
-PitchStiffness  = -0.0041; % /deg
+PitchStiffness  = -0.00195; % /deg
 
 % Limits
 PitchRateMax_User   = 30; % deg/s, used in saturation block
@@ -170,7 +170,7 @@ PitchRateMax_User   = PitchRateMax_User/180*pi; % rad/s, used in saturation bloc
 ElevatorMax         = 25; %deg
 
 %Low pass filters
-PitchBandwidth  = 0.8; %Hz
+PitchBandwidth  = 0.55; %Hz
 Fp_Pitch        = 0.55*2*pi*PitchBandwidth; % used for generating pitch rate command
 Fp_Pitch_2      = 0.55*2*pi*PitchBandwidth*dt; % used in the low pass filter for lift coefficient
 

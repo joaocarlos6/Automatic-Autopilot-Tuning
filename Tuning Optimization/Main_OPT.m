@@ -12,9 +12,9 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 % flag_NoiseLvl= 1;       %0-correct sensor noise levels for each axis, 1-highest level of sensor noise, 2-increase sensor noise x5 
 
 %OPTIMIZATION SETTINGS
-gaopt.PopulationSize = 200;                      %Size of the population.
+gaopt.PopulationSize = 350;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 17*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 24*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -51,7 +51,7 @@ testPlans.gustTriggerVal    = [1];              % Value that will trigger gust s
 testPlans.gustTrigger       = ["Below_AGL"];    % Gust Trigger Type % Variants: Above_AGL, Below_AGL, Above_IAS
 
 % Latency
-testPlans.delay             = [0.010]; % Set of latencies (ms)
+testPlans.delay             = [0.01]; % Set of latencies (ms)
 
 testIndx = 1;
 
@@ -59,9 +59,9 @@ pilotTime = 20; % s - time of maneuver
 trimTime = 10; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
-Q = 1000; %10000;
-R = 1; %0.02;
-C = 0.005; %0.001;
+Q = 3000; %10000;
+R = 0.1; %0.02;
+C = 0.0001; %0.001;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -89,7 +89,7 @@ gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05 1/0.05];
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [1, 1, 0, 0, 0.5];
+lb.pitch = [1, 1, 0.2, 0.2, 0.5];
 ub.pitch = [5, 5, 1, 1, 1.5];
 
 % lb.yaw = [0, 0, 0];
@@ -142,7 +142,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [1.2 1.75 0.3 0.3 0.8];
+    Initialparam = [2.65 1.65 0.45 1 0.55];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
@@ -184,11 +184,11 @@ for i=1:1 %Repeat optimization for all axis
 
     plotname = ['Performance comprison of optimized vs initial gains for ',axis_name{i},'-rate'];
     figure('Name',plotname)
-    plot([0 20 20.02 30],[4.97 4.97 6.97 6.97],'LineWidth',1.5)
+    plot([0 30 30.02 50],[3 3 5 5],'LineWidth',1.5)
     hold on
     plot(StepResponse.(axis_name{i}),'LineWidth',1.5)
     plot(StepResponseIni.(axis_name{i}),'LineWidth',1.5)
-    text(0.1,0.4,{'Optm Gains:',['Kp=' num2str(opt_gains.(axis_name{i})(1))],['Ki=' num2str(opt_gains.(axis_name{i})(2))],['Kts=' num2str(opt_gains.(axis_name{i})(3))]})
+    text(0.1,0.4,{'Optm Gains:',['Kp=' num2str(opt_gains.(axis_name{i})(1))],['Ki=' num2str(opt_gains.(axis_name{i})(2))],['Kds=' num2str(opt_gains.(axis_name{i})(3))],['Kts=' num2str(opt_gains.(axis_name{i})(4))],['PB=' num2str(opt_gains.(axis_name{i})(5))]})
     ylabel('Pitch (deg)');
     title(plotname);
     legend('Setpoint', 'Optimized response','Initial response')
