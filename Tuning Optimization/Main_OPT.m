@@ -12,9 +12,9 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 % flag_NoiseLvl= 1;       %0-correct sensor noise levels for each axis, 1-highest level of sensor noise, 2-increase sensor noise x5 
 
 %OPTIMIZATION SETTINGS
-gaopt.PopulationSize = 200;                      %Size of the population.
+gaopt.PopulationSize = 300;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 17*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 24*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -23,10 +23,10 @@ gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the aver
 WithTail = 1;
 
 % Vehicle
-FTV                        = 3; % Vehicle Generation 
-vehicleType                = "F";
-testPlans.CG                = [ 61.61 ];
-testPlans.mass              = [ "7P" ];    % Placeholder for 7P
+FTV                        = 4; % Vehicle Generation 
+vehicleType                = "A";
+testPlans.CG                = [ "TBF4" ];
+testPlans.mass              = [ "TOW1" ];    % Placeholder for 7P
 testPlans.inertiaScale      = [0];         % Inertia scale
 
 testPlans.descentSlope      = [3]; % Target descent slope (deg)
@@ -34,7 +34,7 @@ testPlans.speedOffset       = [0]; % Offset to approach speed target (m/s)
 testPlans.rolloutTrackOffset= [0]; % At Touchdown offset track rollout control tracks (m)
 
 % Terrain
-testPlans.terrainElevation  = [373];   % Terrain elevation settings (ft); Dolbeau = 373, Foremost = 2904,
+testPlans.terrainElevation  = [1496];   % Terrain elevation settings (ft); Dolbeau = 373, Foremost = 2904,
 testPlans.terrainOffset     = [0];     % Offset applied to sim terrain height (simulate elevation knowledge errors)
 
 % Conditions
@@ -142,7 +142,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [0.4 1 0.5 4.9];
+    Initialparam = [0.4 0.5 0.5 3];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
