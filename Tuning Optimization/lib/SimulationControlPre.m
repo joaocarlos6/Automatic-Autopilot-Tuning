@@ -16,7 +16,7 @@ IASbounce = IASstall*0.8;
 % Note - this is here for compatibilty but does not have an effect on landing sims.
 RTO_Speed = 0;
 
-PiccoloStartingStateMachine = 5; % 1 Transition, 2 Liftoff, 3 Climbout,4 Flying, 5 Landing, 8 Final, 9 Short Final, 10 Touchdown, 11 Rollout
+PiccoloStartingStateMachine = 4; % 1 Transition, 2 Liftoff, 3 Climbout,4 Flying, 5 Landing, 8 Final, 9 Short Final, 10 Touchdown, 11 Rollout
 TrackDistance2Short = (Alt*0.3048) - ShortFinalHeight; % For landing Track Definition
 
 RateLimitAltAccelInit   = 0;

@@ -55,12 +55,12 @@ testPlans.delay             = [0.010]; % Set of latencies (ms)
 
 testIndx = 1;
 
-pilotTime = 15; % s - time of maneuver
-trimTime = 5; % s - time to let controller trim in the commanded initial position
+pilotTime = 20; % s - time of maneuver
+trimTime = 10; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
 Q = 5;
-R = 1;
+R = 10;
 C = 10;
 %% File Paths
 addpath lib
@@ -83,14 +83,14 @@ axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
 %Parameter resolution [Kp ki kd pitchbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05];
+gain_resolution = [1/0.05 1/0.05 1/0.05];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [0.2, 0.2, 0.1, 1];
-ub.pitch = [1, 1.5, 1, 5];
+lb.pitch = [0.1, 0.1, 0.1];
+ub.pitch = [2, 2, 2];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -142,7 +142,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [0.4 0.5 0.5 3];
+    Initialparam = [0.4 0.5 0.5];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else

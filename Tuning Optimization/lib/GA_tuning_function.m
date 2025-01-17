@@ -11,7 +11,7 @@ function [cost, StepResponse] = GA_tuning_function(k)
     assignin('base','KP_Vrate',k(1));
     assignin('base','KI_Vrate',k(2));
     assignin('base','FF_Vrate',k(3));
-    assignin('base','VrateBW',k(4));
+    % assignin('base','VrateBW',k(4));
 
     warning('off','all')
     %Run simulation
