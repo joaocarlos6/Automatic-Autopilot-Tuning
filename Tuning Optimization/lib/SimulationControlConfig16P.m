@@ -129,18 +129,18 @@ AltMax             = 10000;
 AltMin             = 0;
 
 % Vertical Rate to Pitch Gains
-AltRateError2Pitch      = 0.40; 
-AltRateErrorInt2Pitch   = 0.50;  
-AltRateCmd2Pitch        = 0.50;
+AltRateError2Pitch      = 0.35; % 0.40; 
+AltRateErrorInt2Pitch   = 0.45; % 0.50;  
+AltRateCmd2Pitch        = 0.5; % 0.50;
 AltMaxAccel             = 1.25; %m/s/s
 
 % Filters
 % Airspeed Filter
-TasLpfCutoff    = 1.0; %Hz
+TasLpfCutoff    = 1.0; % Hz
 Fp_TAS_Filter   = 2*pi*TasLpfCutoff*dt;
 
 % Vrate Filter
-AltRateLpfCutOff    = 3; %Hz
+AltRateLpfCutOff    = 3; % Hz
 Fp_AltRate          = 0.55*2*pi*AltRateLpfCutOff*dt;
 
 %Limits
