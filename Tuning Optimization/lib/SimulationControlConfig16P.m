@@ -152,10 +152,10 @@ PitchMin    = -PitchMax;
 ElevatorTrim =-3.5; % default: -5
 
 %G72
-PitchRateError2Accel    = 2.65; % 
-PitchRateErrorInt2Accel = 1.65; % 
-PitchDampingTrust       = 0.45;
-PitchStiffnessTrust     = 1;
+PitchRateError2Accel    = 2.85; % 
+PitchRateErrorInt2Accel = 2.5; % 
+PitchDampingTrust       = 0.8;
+PitchStiffnessTrust     = 0.65;
 
 PitchMaxAccel   = 1; % rad/s^2; used in rate limiter
 
@@ -174,7 +174,7 @@ PitchBandwidth  = 0.55; %Hz
 Fp_Pitch        = 0.55*2*pi*PitchBandwidth; % used for generating pitch rate command
 Fp_Pitch_2      = 0.55*2*pi*PitchBandwidth*dt; % used in the low pass filter for lift coefficient
 
-PitchRateLpfCutoff 	= 3; %Hz; bad name; it is actually used for filtering the elevator ouput
+PitchRateLpfCutoff 	= 4.5; %Hz; bad name; it is actually used for filtering the elevator ouput
 Fp_Elevator         = 0.55*2*pi*PitchRateLpfCutoff*dt;
 
 %% Lateral Control (Bank to Aileron)
