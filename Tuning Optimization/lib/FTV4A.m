@@ -9,7 +9,7 @@ IXX                   = InertiaBWB.IXX * 3417.17 * (1+InertiaScale);% In-lbs
 IYY                   = InertiaBWB.IYY * 3417.17 * (1+InertiaScale);% In-lbs
 IZZ                   = InertiaBWB.IZZ * 3417.17 * (1+InertiaScale);% In-lbs
 IXZ                   = InertiaBWB.IXZ * 3417.17 * (1+InertiaScale);% In-lbs
-xCgLocMacBWB          = 61.6; %InertiaBWB.CgMac; % %MAC
+xCgLocMacBWB          = InertiaBWB.CgMac; % %MAC
 
 % copy from initcalculation.m
 YCG         = 0; % Only use 0. Alternate trim setup needed for lateral assymetry.
