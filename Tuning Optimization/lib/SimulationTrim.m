@@ -120,24 +120,39 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
                 SimObj.fadd('Flap1Definition','Settings','Param.REFSI_FD_IN_nmodeFlapLhIBCmd_Deg', 0);
                 SimObj.fadd('Flap1Definition','Settings','Param.REFSI_FD_IN_nmodeFlapRhIBCmd_Deg', 0);
                 SimObj.fadd('Flap1Definition','Settings','Param.REFSI_FD_IN_nmodeFlapRhOBCmd_Deg', 0);
-                SimObj.fadd('Flap1Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  15);
-                SimObj.fadd('Flap1Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  15);
+                if isequal(SimObj.Param.ac_type,507.07)   
+                    SimObj.fadd('Flap1Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  0);
+                    SimObj.fadd('Flap1Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  0);
+                else
+                    SimObj.fadd('Flap1Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  15);
+                    SimObj.fadd('Flap1Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  15);
+                end
 
             SimObj.fclear('Flap2Definition')
                 SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeFlapLhOBCmd_Deg', 15);
                 SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeFlapLhIBCmd_Deg', 15);
                 SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeFlapRhIBCmd_Deg', 15);
                 SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeFlapRhOBCmd_Deg', 15);
-                SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  15);
-                SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  15);
+                if isequal(SimObj.Param.ac_type,507.07)   
+                    SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  0);
+                    SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  0);
+                else
+                    SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  15);
+                    SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  15);
+                end
 
             SimObj.fclear('Flap3Definition')
-                SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeFlapLhOBCmd_Deg', 30);
-                SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeFlapLhIBCmd_Deg', 30);
-                SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeFlapRhIBCmd_Deg', 30);
-                SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeFlapRhOBCmd_Deg', 30);
-                SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  15);
-                SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  15);
+                SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeFlapLhOBCmd_Deg', 33);
+                SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeFlapLhIBCmd_Deg', 33);
+                SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeFlapRhIBCmd_Deg', 33);
+                SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeFlapRhOBCmd_Deg', 33);
+                if isequal(SimObj.Param.ac_type,507.07)   
+                    SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  0);
+                    SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  0);
+                else
+                    SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  15);
+                    SimObj.fadd('Flap3Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  15);
+                end
 
         % Actuator Delays
             if isequal(SimObj.Param.ac_type,507.07)
@@ -405,6 +420,7 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
     SimObj.fadd(TrimSetup,'Settings','Input.RefWindDirDeg',WindDir_Deg);
     SimObj.fadd(TrimSetup,'Settings','Input.RefWindSpdKts',WindSpd_Kts);
     SimObj.fadd(TrimSetup,'Settings','OutputDemand.TrackDeg',Track);
+    SimObj.fadd(TrimSetup,'Settings','Input.FlapSlatLvrDetent',Flap);
     SimObj.fadd(TrimSetup,'Settings','DState.ZposnFt',-TerrainHeight);
     SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotInitCgPosn_Ft',XCG);
     SimObj.fadd('OpenLoopOnGround','Settings','DState.PsiRad',Track*pi/180);

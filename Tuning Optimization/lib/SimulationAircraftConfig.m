@@ -20,7 +20,7 @@ end
 
 %% Define Aircraft Model Parameters for Simulation
 
-    Flap                 = 0;% 0,1,2,3
+    Flap                 = 2;% 0,1,2,3
     HStab                = 0;% Deg
     CGShifterInitPosn_ft = 0; % ft - inital position of CG shifter
    

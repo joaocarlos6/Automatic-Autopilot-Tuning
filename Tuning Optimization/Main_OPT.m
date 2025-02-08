@@ -34,7 +34,7 @@ testPlans.speedOffset       = [0]; % Offset to approach speed target (m/s)
 testPlans.rolloutTrackOffset= [0]; % At Touchdown offset track rollout control tracks (m)
 
 % Terrain
-testPlans.terrainElevation  = [373];   % Terrain elevation settings (ft); Dolbeau = 373, Foremost = 2904,
+testPlans.terrainElevation  = [1496];   % Terrain elevation settings (ft); Dolbeau = 373, Foremost = 2904,
 testPlans.terrainOffset     = [0];     % Offset applied to sim terrain height (simulate elevation knowledge errors)
 
 % Conditions
@@ -142,7 +142,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [2.5 6.15 0.7 0.65];
+    Initialparam = [2.5 5.7 0.6 0.65];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
