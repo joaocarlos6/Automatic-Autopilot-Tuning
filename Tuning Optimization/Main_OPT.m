@@ -21,12 +21,13 @@ gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the aver
 
 %% Simulation settings
 WithTail = 1;
+Flap = 0;
 
 % Vehicle
 FTV                        = 4; % Vehicle Generation 
 vehicleType                = "A";
-testPlans.CG                = [ "TBF4" ];
-testPlans.mass              = [ "TOW1" ];    
+testPlans.CG                = [ "TBF5" ];
+testPlans.mass              = [ "LDG" ];    
 testPlans.inertiaScale      = [0];         % Inertia scale
 
 testPlans.descentSlope      = [3]; % Target descent slope (deg)
@@ -52,6 +53,8 @@ testPlans.gustTrigger       = ["Below_AGL"];    % Gust Trigger Type % Variants: 
 
 % Latency
 testPlans.delay             = [0.01]; % Set of latencies (ms)
+
+WSMCart = 0;
 
 testIndx = 1;
 

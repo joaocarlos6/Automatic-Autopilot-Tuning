@@ -4,7 +4,7 @@ tic
 % Beginning  of User Defined Code.
 % Trim Condition Definition
 
-    FTV = 3; % Set to FTV3 for 7% and FTV4 for 16.5%
+    FTV = 4; % Set to FTV3 for 7% and FTV4 for 16.5%
     if FTV==3
         Speed       = 65;
     elseif FTV==4
@@ -19,9 +19,8 @@ tic
     WithTail             = 1; % Set to 0 to remove Tail
     xCgLocMac            = 60.77;                                                   % PERCENT MAC    
     Track                = 10; % Deg Needs to be implemented
-    WindDir              = 90; % Deg
-    WindSpd              =  0; % knots
-    VertWindSpd          =  0; % knots
+    WindDir_Deg          = 90; % Deg
+    WindSpd_Kts          =  0; % knots
     Longitude            = -71.624729; % Alma HWIL test Box (not to be actually flow!)
     Latitude             =  48.496366; %  Degrees
     Turbulence           = 0.0; % 0 = None, 1 = Light
@@ -29,8 +28,6 @@ tic
     CGShifterInitPosn_ft = 1; % ft - inital position of CG shifter
     CLAWs_On             = 1;
 
-    NWCastoring          = 0; % NWCastoring sets the nose wheel into castoring mode
-    
     Cbar        = 0.666;
     XCGMeters   = (xCgLocMac/100*Cbar + 0.37569);                         % cg location relative to nose [m] WARNING: 0.37569 NEEDS TO BE UPDATED FOR 16.5%
 
@@ -54,52 +51,58 @@ tic
     end
     
     % 16.5% Latency
-    ActuatorHBL6625ResponseDelay     = 0.0132;% Latency in seconds imposed on control actuator Default shipped value 0.0132
-    ActuatorCBS20ResponseDelay       = 0.018; % Latency in seconds imposed on control actuator Default shipped value 0.0180
-    ActuatorCBS15ResponseDelay       = 0.018; % Latency in seconds imposed on control actuator Default shipped value 0.0180
-    ActuatorHitecSG33BLResponseDelay = 0.02;  % Latency in seconds imposed on control actuator Default shipped value 0.0200
+    ActuatorModel.ActuatorHBL6625ResponseDelay     = 0.0132;% Latency in seconds imposed on control actuator Default shipped value 0.0132
+    ActuatorModel.ActuatorCBS20ResponseDelay       = 0.018; % Latency in seconds imposed on control actuator Default shipped value 0.0180
+    ActuatorModel.ActuatorCBS15ResponseDelay       = 0.018; % Latency in seconds imposed on control actuator Default shipped value 0.0180
+    ActuatorModel.ActuatorHitecSG33BLResponseDelay = 0.02;  % Latency in seconds imposed on control actuator Default shipped value 0.0200
     
     % 7% Latency
     SurfaceLatency = 0.000; % Latency in seconds imposed on control surfaces Default shipped value 0.01
 
 % In Flight trimsetup should use Piccolo. On Ground is available for
 % ground operations
-      PropulsionLatency = 0.050;
-      BrakeLatency      = 0.200;
+      ActuatorModel.PropulsionJetCatLatency = 0.050;
+      ActuatorModel.PropulsionEDFLatency    = 0.050;
+      ActuatorModel.BrakeLatency            = 0.200;
 
       EngineLhFuelCut   = 0;
       EngineRhFuelCut   = 0;
-      RefWindDirDeg     = WindDir;
-      RefWindSpdKts     = WindSpd;
-      VertWindSpd
+      RefWindDirDeg     = WindDir_Deg;
+      RefWindSpdKts     = WindSpd_Kts;
       PedalBrakeLh      = 0;
       PedalBrakeRh      = 0;
-
+      
 % Turn On or Off Angular Accelerometers for BA Claws, 1 is On and 0 is Off
       AngularAccelOn = 1;      
       
-% Trim setup to use
-      TrimSetup   = 'Piccolo';
+% Trim setup to use     
+%      TrimSetup   = 'Piccolo';
 %      TrimSetup   = 'OpenLoopStraightAndLevel';%Do Not Use
-%      TrimSetup   = 'OpenLoopOnGround';Speed = 2;
+     TrimSetup   = 'OpenLoopOnGround';Speed = 0;
 
 % Define Model
     ModelName = 'Sim_Runs';
     if FTV==3
-        DLL_Name  = '.\t507_7p_T507_7P_sim_Top3_34_Opt2.mexw64';
+        DLL_Name  = '.\t507_7p_T507_7P_sim_Top3_15_Opt2.mexw64';
     elseif FTV==4
-        DLL_Name  = '.\t507_16p5_T507_16P5_sim_Top1_71_Opt2.mexw64';
+        DLL_Name  = 't507_16p5_T507_16P5_sim_Top1_65_Opt2.mexw64';
     end
 
 % Sets path to bin regardless of directory
     addpath([pwd '\bin'])
+    
+    
+
+    SimDt = 1/600; % Iteration rate of the BA CLAWs
+    dt    = 1/100; % Iteration Rate Of Simulink
+    nDT   = dt / SimDt;
 
 % End of User Defined Code.
 
 
 %% Do not edit code below this line.
 %% SimObj Global label declaration
-    global SimObj;
+      global SimObj;
     if isempty(SimObj)
         % Create Object, first call only.
         SimObj = CompiledSimulink(DLL_Name); % Sim Object Processing
@@ -134,8 +137,8 @@ tic
 				SimObj.fadd('Defaults','Settings','Param.HeightTerrainMGRhFt', TerrainHeight);
 				SimObj.fadd('Defaults','Settings','Param.HeightTerrainNGFt',   TerrainHeight);
                 SimObj.fadd('Defaults','Settings','Param.Flight_RnwSlopeOn',   0);
-            
-            % Set NRC Angular Accelerometers on or off 
+                
+            % Set NRC Angular Accelerometers on or off
             if isequal(SimObj.Param.ac_type,507.16)
                 SimObj.fadd('Defaults','Settings','Param.test_pilotAngAccEstimatorEnable',   1-AngularAccelOn);
             end
@@ -179,27 +182,27 @@ tic
                 SimObj.Limits_DState.RMGStrutInch       = [0.001, 0.15];
                 SimObj.Limits_DState.NGStrutInch        = [0.001, 1.3];
                
-                SimObj.fadd('ActDelay','Settings','Param.RudWingPCUDynActuatorResponseDelay',   SurfaceLatency); % 0.01 Try
-                SimObj.fadd('ActDelay','Settings','Param.AilPCUDynActuatorResponseDelay',       SurfaceLatency); % 0.01
-                SimObj.fadd('ActDelay','Settings','Param.ElvObPCUDynActuatorResponseDelay',     SurfaceLatency); % 0.01
-                SimObj.fadd('ActDelay','Settings','Param.ElvIbPCUDynActuatorResponseDelay',     SurfaceLatency); % 0.01
-                SimObj.fadd('ActDelay','Settings','Param.PylonRudPCUDynActuatorResponseDelay',  SurfaceLatency); % 0.01
-                SimObj.fadd('ActDelay','Settings','Param.UTailStabPCUDynActuatorResponseDelay', SurfaceLatency); % 0.01
-                SimObj.fadd('ActDelay','Settings','Param.UTailElvPCUDynActuatorResponseDelay',  SurfaceLatency); % 0.01
-                SimObj.fadd('ActDelay','Settings','Param.UTailRudPCUDynActuatorResponseDelay',  SurfaceLatency); % 0.01
-                SimObj.fadd('ActDelay','Settings','Param.AftFlapPCUDynActuatorResponseDelay',   SurfaceLatency); % 0.01  
-                SimObj.fadd('ActDelay','Settings','Param.BrakePCUDynActuatorResponseDelay',     BrakeLatency); % 0.01  
-                SimObj.fadd('ActDelay','Settings','Param.TLAPCUDynActuatorResponseDelay',       PropulsionLatency); % 0.01  
-                SimObj.fadd('ActDelay','Settings','Param.NoseGearPCUDynActuatorResponseDelay',  SurfaceLatency); % 0.01  
+                SimObj.fadd('ActDelay','Settings','Param.RudWingPCUDynActuatorResponseDelay',   ActuatorModel.ActuatorHBL6625ResponseDelay); % 0.01 Try
+                SimObj.fadd('ActDelay','Settings','Param.AilPCUDynActuatorResponseDelay',       ActuatorModel.ActuatorHBL6625ResponseDelay); % 0.01
+                SimObj.fadd('ActDelay','Settings','Param.ElvObPCUDynActuatorResponseDelay',     ActuatorModel.ActuatorHBL6625ResponseDelay); % 0.01
+                SimObj.fadd('ActDelay','Settings','Param.ElvIbPCUDynActuatorResponseDelay',     ActuatorModel.ActuatorHBL6625ResponseDelay); % 0.01
+                SimObj.fadd('ActDelay','Settings','Param.PylonRudPCUDynActuatorResponseDelay',  ActuatorModel.ActuatorHBL6625ResponseDelay); % 0.01
+                SimObj.fadd('ActDelay','Settings','Param.UTailStabPCUDynActuatorResponseDelay', ActuatorModel.ActuatorHBL6625ResponseDelay); % 0.01
+                SimObj.fadd('ActDelay','Settings','Param.UTailElvPCUDynActuatorResponseDelay',  ActuatorModel.ActuatorHBL6625ResponseDelay); % 0.01
+                SimObj.fadd('ActDelay','Settings','Param.UTailRudPCUDynActuatorResponseDelay',  ActuatorModel.ActuatorHBL6625ResponseDelay); % 0.01
+                SimObj.fadd('ActDelay','Settings','Param.AftFlapPCUDynActuatorResponseDelay',   ActuatorModel.ActuatorCBS15ResponseDelay); % 0.01  
+                SimObj.fadd('ActDelay','Settings','Param.BrakePCUDynActuatorResponseDelay',     ActuatorModel.BrakeLatency); % 0.01  
+                SimObj.fadd('ActDelay','Settings','Param.TLAPCUDynActuatorResponseDelay',       ActuatorModel.PropulsionEDFLatency); % 0.01  
+                SimObj.fadd('ActDelay','Settings','Param.NoseGearPCUDynActuatorResponseDelay',  ActuatorModel.ActuatorHBL6625ResponseDelay); % 0.01  
 
             elseif isequal(SimObj.Param.ac_type,507.16)
-                SimObj.fadd('ActDelay','Settings','Param.ActuatorHBL6625ResponseDelay',             ActuatorHBL6625ResponseDelay);      
-                SimObj.fadd('ActDelay','Settings','Param.ActuatorCBS20ResponseDelay',               ActuatorCBS20ResponseDelay);    
-                SimObj.fadd('ActDelay','Settings','Param.NoseGearActuatorHitecSG33BLResponseDelay', ActuatorHitecSG33BLResponseDelay);        
-                SimObj.fadd('ActDelay','Settings','Param.ActuatorCBS15ResponseDelay',               ActuatorCBS15ResponseDelay);        
-                SimObj.fadd('ActDelay','Settings','Param.ActuatorHitecSG33BLResponseDelay',         ActuatorHitecSG33BLResponseDelay);  
-                SimObj.fadd('ActDelay','Settings','Param.BrakePCUDynActuatorResponseDelay',         BrakeLatency); 
-                SimObj.fadd('ActDelay','Settings','Param.TLAPCUDynActuatorResponseDelay',           PropulsionLatency); 
+                SimObj.fadd('ActDelay','Settings','Param.ActuatorHBL6625ResponseDelay',             ActuatorModel.ActuatorHBL6625ResponseDelay);      
+                SimObj.fadd('ActDelay','Settings','Param.ActuatorCBS20ResponseDelay',               ActuatorModel.ActuatorCBS20ResponseDelay);    
+                SimObj.fadd('ActDelay','Settings','Param.NoseGearActuatorHitecSG33BLResponseDelay', ActuatorModel.ActuatorHitecSG33BLResponseDelay);        
+                SimObj.fadd('ActDelay','Settings','Param.ActuatorCBS15ResponseDelay',               ActuatorModel.ActuatorCBS15ResponseDelay);        
+                SimObj.fadd('ActDelay','Settings','Param.ActuatorHitecSG33BLResponseDelay',         ActuatorModel.ActuatorHitecSG33BLResponseDelay);  
+                SimObj.fadd('ActDelay','Settings','Param.BrakePCUDynActuatorResponseDelay',         ActuatorModel.BrakeLatency); 
+                SimObj.fadd('ActDelay','Settings','Param.TLAPCUDynActuatorResponseDelay',           ActuatorModel.PropulsionJetCatLatency); 
             end
         % Engines
              if isequal(SimObj.Param.ac_type,507.07)
@@ -328,6 +331,9 @@ tic
             %None. We're that good ;)
 
             SimObj.fclear('OpenLoopOnGround');
+%             SimObj.fadd('OpenLoopOnGround','X','DState.LMGStrutDotInchps');
+%             SimObj.fadd('OpenLoopOnGround','X','DState.NGStrutDotInchps');
+%             SimObj.fadd('OpenLoopOnGround','X','DState.RMGStrutDotInchps');
             if isequal(SimObj.Param.ac_type,507.07)
                 SimObj.fadd('OpenLoopOnGround','X','DState.LMGStrutInch',0.12);
                 SimObj.fadd('OpenLoopOnGround','X','DState.NGStrutInch',0.15);
@@ -339,8 +345,11 @@ tic
             end
             
             SimObj.fadd('OpenLoopOnGround','F','Deriv.LMGStrutDotInchps');
+%             SimObj.fadd('OpenLoopOnGround','F','Deriv.LMGStrutInch');
             SimObj.fadd('OpenLoopOnGround','F','Deriv.NGStrutDotInchps');
+%             SimObj.fadd('OpenLoopOnGround','F','Deriv.NGStrutInch');
             SimObj.fadd('OpenLoopOnGround','F','Deriv.RMGStrutDotInchps');
+%             SimObj.fadd('OpenLoopOnGround','F','Deriv.RMGStrutInch');
 
             SimObj.fadd('OpenLoopOnGround','X','DState.PresAltFt',0.5);
             SimObj.fadd('OpenLoopOnGround','F','Signal.PresAltFt - Param.Flight_alt');
@@ -359,17 +368,23 @@ tic
             SimObj.fadd('OpenLoopOnGround','Settings','Input.LMGearPosnNorm',1);
             SimObj.fadd('OpenLoopOnGround','Settings','Input.RMGearPosnNorm',1);
             SimObj.fadd('OpenLoopOnGround','Settings','Input.NGearPosnNorm',1);
-
+            
+            if isequal(SimObj.Param.ac_type,507.07)
+                SimObj.fadd('OpenLoopOnGround','Settings','Input.GearPosnNorm',1);
+            end
+            
             SimObj.fadd('OpenLoopOnGround','Settings','Param.Flight_lgdown',1);
             SimObj.fadd('OpenLoopOnGround','Settings','Input.GearLvrDown',1);
             SimObj.fadd('OpenLoopOnGround','Settings','Param.Flight_Force_Trim_on_Ground',1);
-            if isequal(SimObj.Param.ac_type,507.16)
+            
+            if isequal(SimObj.Param.ac_type,507.16) && Speed >= 2
                 SimObj.fadd('OpenLoopOnGround','Settings','DState.N1_duplicate_1',@(obj)(obj.Signal.N1LhIdleRpm));
                 SimObj.fadd('OpenLoopOnGround','Settings','DState.N1_duplicate_2',@(obj)(obj.Signal.N1RhIdleRpm));
+
+                SimObj.fadd('OpenLoopOnGround','F','Signal.CASKts - SignalDemand.CASKts');
+                SimObj.fexc('OpenLoopOnGround','F','Signal.UFtps'); 
             end
-            SimObj.fadd('OpenLoopOnGround','F','Signal.CASKts - SignalDemand.CASKts');
-            SimObj.fexc('OpenLoopOnGround','F','Signal.UFtps'); 
-        
+            
             SimObj.fadd('OpenLoopOnGround','IC','DState.ZposnFt',-0.6);
             SimObj.StepLim_DState.LMGStrutInch      = 0.1;
             SimObj.StepLim_DState.RMGStrutInch      = 0.1;
@@ -410,21 +425,13 @@ tic
 
     end
 
-%     dt    = 1/200; % Iteration Rate Of Simulink
-%     SimDt = 1/200; % Iteration rate of the BA CLAWs
-    SimDt = 1/600; % Iteration rate of the BA CLAWs
-%     nDT   = dt / SimDt;
-    dt    = 1/100; % Iteration Rate Of Simulink
-%     SimDt = 1/200; % Iteration rate of the BA CLAWs
-    nDT   = dt / SimDt;
 
 %% Config definitions
 
     SimObj.fdeactivate;SimObj.fadd(TrimSetup,'fsetup',['Flap',num2str(Flap),'Definition']);
     SimObj.fadd(TrimSetup,'Settings','Param.AirVonkarmanTurbLevel',Turbulence);% 1 - light/ 2 = medium.
-    SimObj.fadd(TrimSetup,'Settings','Input.RefWindDirDeg',WindDir);
-    SimObj.fadd(TrimSetup,'Settings','Input.RefWindSpdKts',WindSpd);
-    SimObj.fadd(TrimSetup,'Settings','Input.VertWindSpdKts',VertWindSpd);
+    SimObj.fadd(TrimSetup,'Settings','Input.RefWindDirDeg',WindDir_Deg);
+    SimObj.fadd(TrimSetup,'Settings','Input.RefWindSpdKts',WindSpd_Kts);
     SimObj.fadd(TrimSetup,'Settings','OutputDemand.TrackDeg',Track);
     SimObj.fadd(TrimSetup,'Settings','DState.ZposnFt',-TerrainHeight);
     SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotInitCgPosn_Ft',XCG);
@@ -554,7 +561,7 @@ tic
     Inz.Param.REFSI_FD_IN_nmodeTlaRhCmd_Deg         = 0;
     Inz.Input.EngineLhFuelCut                       = 0;
     Inz.Input.EngineRhFuelCut                       = 0;
-    Inz.Input.NWCastoring              				= 0;
+    Inz.Param.REFSI_FD_IN_nmodeBrakeCmd             = 0;
     Inz.Param.REFSI_FD_IN_nmodeNoseGearCmd_Deg      = 0;
     Inz.Param.REFSI_FD_IN_nmodeSplrLhOutbdCmd_Deg   = 0;
     Inz.Param.REFSI_FD_IN_nmodeSplrLhInbdCmd_Deg    = 0;
@@ -826,6 +833,9 @@ tic
             'Signal.ismSplrRhOutbdPosn_Deg'
             'Signal.ismCgShifterPosn_Ft'
 %             'Signal.ismWeightOnWheel'
+            'Signal.ismNgWeightOnWheel_Lbs'
+            'Signal.ismLmgWeightOnWheel_Lbs'
+            'Signal.ismRmgWeightOnWheel_Lbs'
             'Signal.ismHeightAboveGround_Ft'
         ];
     end

@@ -9,7 +9,7 @@ if ~exist('NoiseStd','var')
     SimulationSensorConfig;
 end
 
-PiccoloGainVersion  = "G74";
+PiccoloGainVersion  = "G73";
 ControlAllocation   = "M2 FTD";
 modelScale          = '16P5';
 
@@ -21,7 +21,7 @@ CLAWs_On = 0; % We elect to disable internal BA CLaws for now...
 % landing modes. This can be set conditionally during simulation
 % eventually.
 inFlight = 1;
-AltCruise_m = testPlans(testIndx).terrainElevation * 0.3048 + 200; % Cruising Alt, m
+AltCruise_m = Alt * 0.3048; % Cruising Alt, m
 
 % Longitudinal Control Mode (0 == Alt Priority, 1 == Airspeed Priority)
 LonMode = 0;
@@ -120,7 +120,7 @@ JetCatOffset = 5; % Pcnt, offset to jetCat command to simulate higher thrust
 %%  Vertical Rate Control (Landing Lon Gains)
 % Bandwidth
 AltBandwidth    = 0.18; %Hz 
-Fp_Alt          = 0.55*AltBandwidth;
+Fp_Alt          = 2*pi*0.55*AltBandwidth;
 
 % Limits
 ClimbMaxFraction   = 0.35;
@@ -152,17 +152,17 @@ PitchMin    = -PitchMax;
 ElevatorTrim =-3.5; % default: -5
 
 %G72
-PitchRateError2Accel    = 2.85; % 
-PitchRateErrorInt2Accel = 2.5; % 
-PitchDampingTrust       = 0.8;
-PitchStiffnessTrust     = 0.65;
+PitchRateError2Accel    = 1.2; % 
+PitchRateErrorInt2Accel = 1.75; % 
+PitchDampingTrust       = 0.3;
+PitchStiffnessTrust     = 0.3;
 
-PitchMaxAccel   = 1; % rad/s^2; used in rate limiter
+PitchMaxAccel   = 1.0; % rad/s^2; used in rate limiter
 
 %Vehicle Properties
-ElevatorPower   = -0.002060; % /deg
+ElevatorPower   = -0.002209; % /deg
 PitchDamping    = -1.2608; % Cm/qbar
-PitchStiffness  = -0.00195; % /deg
+PitchStiffness  = -0.0041; % /deg
 
 % Limits
 PitchRateMax_User   = 30; % deg/s, used in saturation block
@@ -170,11 +170,11 @@ PitchRateMax_User   = PitchRateMax_User/180*pi; % rad/s, used in saturation bloc
 ElevatorMax         = 25; %deg
 
 %Low pass filters
-PitchBandwidth  = 0.55; %Hz
+PitchBandwidth  = 0.8; %Hz
 Fp_Pitch        = 0.55*2*pi*PitchBandwidth; % used for generating pitch rate command
 Fp_Pitch_2      = 0.55*2*pi*PitchBandwidth*dt; % used in the low pass filter for lift coefficient
 
-PitchRateLpfCutoff 	= 4.5; %Hz; bad name; it is actually used for filtering the elevator ouput
+PitchRateLpfCutoff 	= 3; %Hz; bad name; it is actually used for filtering the elevator ouput
 Fp_Elevator         = 0.55*2*pi*PitchRateLpfCutoff*dt;
 
 %% Lateral Control (Bank to Aileron)

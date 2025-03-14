@@ -20,11 +20,10 @@ end
 
 %% Define Aircraft Model Parameters for Simulation
 
-    Flap                 = 0;% 0,1,2,3
     HStab                = 0;% Deg
     CGShifterInitPosn_ft = 0; % ft - inital position of CG shifter
    
-    if FTV == 2
+    if FTV==2
         CGConfig        = testPlans(testIndx).CG;
         InertiaScale    = testPlans(testIndx).inertiaScale; % scale as percentage from test plan
         ZCGScale        = 0;
@@ -52,6 +51,7 @@ end
         % Can optionally set custom CG posn but accuracy may vary...
         %%xCgLocMacBWB_custom = testPlans(testIndx).CG;
         %%CGConfig = "SIMULATION"; % This will fall through CG switch statement to allow overriding of CG value
+        FTV3F_flag = 0;
         
         if(vehicleType == "C")
             FTV3C % Charlie config script
@@ -61,7 +61,7 @@ end
             FTV3E % Echo
         elseif(vehicleType == "F")
             FTV3F % Echo config script
-            
+            FTV3F_flag = 1; 
         else
             error("Unsupported Gen 3 model!");
         end
