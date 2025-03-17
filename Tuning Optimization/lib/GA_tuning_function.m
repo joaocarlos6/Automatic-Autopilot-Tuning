@@ -18,13 +18,14 @@ function [cost, StepResponse] = GA_tuning_function(k)
     %Run simulation
     output_cmd_text = evalc("sim('Maneuver.slx')");
     warning('on','all')
-
+   
     %Return cost
     cost = COST.Data(end);
-    if COST.Time(end) < 50
+    if COST.Time(end) < 40
         cost = inf;
     end
-    
+       
+
     clear output_cmd_text
     rmdir('slprj','s')
 

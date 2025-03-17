@@ -14,7 +14,7 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 %OPTIMIZATION SETTINGS
 gaopt.PopulationSize = 350;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 24*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 19*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -58,13 +58,13 @@ WSMCart = 0;
 
 testIndx = 1;
 
-pilotTime = 20; % s - time of maneuver
-trimTime = 10; % s - time to let controller trim in the commanded initial position
+pilotTime = 30; % s - time of maneuver
+trimTime = 5; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
-Q = 3000; %10000;
-R = 0.1; %0.02;
-C = 0.0001; %0.001;
+Q = 2; %10000;
+R = 1.5; %0.02;
+C = 0.1; %0.001;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -92,7 +92,7 @@ gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05 1/0.05];
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [1, 1, 0.2, 0.2, 0.5];
+lb.pitch = [1, 1, 0.1, 0.1, 0.5];
 ub.pitch = [5, 5, 1, 1, 1.5];
 
 % lb.yaw = [0, 0, 0];
@@ -145,7 +145,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [2.85 2.5 0.8 0.65 0.55];
+    Initialparam = [1.2 1.75 0.3 0.3 0.8];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
@@ -155,6 +155,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Get cost function value from the initial parameters (SID flight gains)
     [InitialCostScore.(axis_name{i}), StepResponseIni.(axis_name{i})] = GA_tuning_function([Initialparam]);
+
     disp(' ')
     disp(['The cost value with the initial tuning gains is: ' num2str(InitialCostScore.(axis_name{i}))])
 
@@ -184,15 +185,15 @@ for i=1:1 %Repeat optimization for all axis
     %% Plots
     %RUN SIMULATION AND SAVE PLOTS OF IMPROVED RESULTS
     [~,StepResponse.(axis_name{i})] = GA_tuning_function(opt_gains.(axis_name{i}).*gain_resolution);
-
+       
     plotname = ['Performance comprison of optimized vs initial gains for ',axis_name{i},'-rate'];
     figure('Name',plotname)
-    plot([0 30 30.02 50],[3 3 5 5],'LineWidth',1.5)
+    plot([0 35 35.02 40],[0 0 2 2],'LineWidth',1.5)
     hold on
     plot(StepResponse.(axis_name{i}),'LineWidth',1.5)
     plot(StepResponseIni.(axis_name{i}),'LineWidth',1.5)
     text(0.1,0.4,{'Optm Gains:',['Kp=' num2str(opt_gains.(axis_name{i})(1))],['Ki=' num2str(opt_gains.(axis_name{i})(2))],['Kds=' num2str(opt_gains.(axis_name{i})(3))],['Kts=' num2str(opt_gains.(axis_name{i})(4))],['PB=' num2str(opt_gains.(axis_name{i})(5))]})
-    ylabel('Pitch (deg)');
+    ylabel('Pitch Rate (deg/s)');
     title(plotname);
     legend('Setpoint', 'Optimized response','Initial response')
     grid on 
