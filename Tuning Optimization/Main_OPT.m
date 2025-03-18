@@ -12,9 +12,9 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 % flag_NoiseLvl= 1;       %0-correct sensor noise levels for each axis, 1-highest level of sensor noise, 2-increase sensor noise x5 
 
 %OPTIMIZATION SETTINGS
-gaopt.PopulationSize = 350;                      %Size of the population.
+gaopt.PopulationSize = 300;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 19*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 6.5*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -62,9 +62,10 @@ pilotTime = 30; % s - time of maneuver
 trimTime = 5; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
-Q = 2; %10000;
-R = 1.5; %0.02;
-C = 0.1; %0.001;
+Q = 10000;
+R = 2;
+C = 0.01;
+D = 10;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -93,7 +94,7 @@ gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05 1/0.05];
 % ub.roll = [2, 2, 1];
 
 lb.pitch = [1, 1, 0.1, 0.1, 0.5];
-ub.pitch = [5, 5, 1, 1, 1.5];
+ub.pitch = [3, 3, 1, 1, 1.5];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
