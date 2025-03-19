@@ -13,17 +13,14 @@ function [Mass, Inertia] = InertiaLookupBWB(CG_Loc, WithTail, FTV, MassConfig,Pa
 
 
 % Last row number in table containing UTail configs
-UTAIL_MAX_ROW = 26;
+UTAIL_MAX_ROW = 34;
 
 switch FTV
     case "FTV4A"
         
         % Define location of xls doc
-        if PackageFlag == 1
-            fileDirTestMatrix     = [pwd+"\"];
-        else
-            fileDirTestMatrix     = 'R:\0080-BA-16.5PCNT BWB HWIL SIMULATION\DOCUMENTS\PICCOLO TUNING EFFORTS\';
-        end
+
+        fileDirTestMatrix     = [pwd+"\lib\"];
         fileNameTestMatrix    = '0062-BA-FD1-Flight Test Matrix BBA 16pcnt (Pre Flight Documentation)_.xlsm';
         
         % Set options and import config table

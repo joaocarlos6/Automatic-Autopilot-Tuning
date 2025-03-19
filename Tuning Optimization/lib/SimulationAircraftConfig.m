@@ -20,11 +20,11 @@ end
 
 %% Define Aircraft Model Parameters for Simulation
 
-    Flap                 = 0;% 0,1,2,3
     HStab                = 0;% Deg
     CGShifterInitPosn_ft = 0; % ft - inital position of CG shifter
-   
-    if FTV == 2
+    Flap = 0;
+
+    if FTV==2
         CGConfig        = testPlans(testIndx).CG;
         InertiaScale    = testPlans(testIndx).inertiaScale; % scale as percentage from test plan
         ZCGScale        = 0;
@@ -34,7 +34,7 @@ end
         %%CGConfig = "SIMULATION"; % This will fall through CG switch statement to allow overriding of CG value
         
         FTV2C % Vehicle config script
-
+        
         Cbar                    = 0.666;  
         XCG_m                   = (xCgLocMacBWB/100*Cbar + 0.37569);        % CG location relative to nose [m] WARNING: 0.37569 NEEDS TO BE UPDATED FOR 16.5%
         XCG                     = (XCG_m/0.07)/0.0254 * 0.6412 - 253.52;    % CG % = 0.6412*In - 253.52 
@@ -52,6 +52,7 @@ end
         % Can optionally set custom CG posn but accuracy may vary...
         %%xCgLocMacBWB_custom = testPlans(testIndx).CG;
         %%CGConfig = "SIMULATION"; % This will fall through CG switch statement to allow overriding of CG value
+        FTV3F_flag = 0;
         
         if(vehicleType == "C")
             FTV3C % Charlie config script
@@ -61,7 +62,7 @@ end
             FTV3E % Echo
         elseif(vehicleType == "F")
             FTV3F % Echo config script
-            
+            FTV3F_flag = 1; 
         else
             error("Unsupported Gen 3 model!");
         end
@@ -86,7 +87,7 @@ end
         
         % Scaling Parameters
         InertiaScale            = testPlans(testIndx).inertiaScale; % scale as percentage from test plan
-
+        
         ZCGScale                                    = 0; % scale as percentage
         WheelContact2AftNovatelAntenna_Ft           = 2.02; % Offset from ground to 16P5 Aft Novatel. Note touchdown altitudes measured from waterline where AP installed roughly
         TerrainHeight2GPSmeasurementHeightOffset    = WheelContact2AftNovatelAntenna_Ft;
@@ -94,7 +95,7 @@ end
         FTV4A; % Lookup Inertias and Mass from Excel Reference Table
         
         AngularAccelOn = 0; % Set angular accel flag
-     else
+    else
         error('undefined FTV');
     end
     

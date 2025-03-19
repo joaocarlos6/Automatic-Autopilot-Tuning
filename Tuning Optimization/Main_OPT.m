@@ -5,7 +5,7 @@ clc
 addpath(genpath("lib\"))
 
 %% OPTIONS
-optimizationName = 'Piccolo_FTV3F_AFT_CG_VRate';
+optimizationName = 'Piccolo_FTV4F_AFT_CG_VRate';
 dev_mode = true;        %Setting this to true enables developer mode which disables some features making it faster to run the code
 % flag_optfilter = 0;     %1-Optimize DGYRO low pass filter, 0-No filter optimization of DGYRO
 % flag_noise = 1;         %0-to disable noise, 1-to enable noise
@@ -25,8 +25,8 @@ WithTail = 1;
 % Vehicle
 FTV                        = 4; % Vehicle Generation 
 vehicleType                = "A";
-testPlans.CG                = [ "TBF4" ];
-testPlans.mass              = [ "TOW1" ];    % Placeholder for 7P
+testPlans.CG                = [ "TBF5" ];
+testPlans.mass              = [ "MID" ];    % Placeholder for 7P
 testPlans.inertiaScale      = [0];         % Inertia scale
 
 testPlans.descentSlope      = [3]; % Target descent slope (deg)
@@ -50,6 +50,8 @@ testPlans.gustTriggerVal    = [1];              % Value that will trigger gust s
 % Note – Flare height = 2m
 testPlans.gustTrigger       = ["Below_AGL"];    % Gust Trigger Type % Variants: Above_AGL, Below_AGL, Above_IAS
 
+WSMCart = 0;
+
 % Latency
 testPlans.delay             = [0.010]; % Set of latencies (ms)
 
@@ -59,9 +61,9 @@ pilotTime = 20; % s - time of maneuver
 trimTime = 10; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
-Q = 5;
-R = 10;
-C = 10;
+Q = 0.5;
+R = 100;
+C = 100;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
