@@ -15,12 +15,12 @@ function [cost, StepResponse] = GA_tuning_function(k)
 
     warning('off','all')
     %Run simulation
-    output_cmd_text = evalc("sim('Maneuver.slx')");
+    output_cmd_text = evalc("sim('Landing_VV.slx')");
     warning('on','all')
 
     %Return cost
     cost = COST.Data(end);
-    if COST.Time(end) < 30
+    if SimVer.Sim_Pic3.apMode.Data(end) ~= 10
         cost = inf;
     end
     

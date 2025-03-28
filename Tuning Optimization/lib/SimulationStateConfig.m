@@ -27,7 +27,7 @@ end
         
     elseif FTV==4
         Speed   = 41*1.944; % Kts
-        Alt     = 1000 + TerrainHeight;% Ft
+        Alt     = 400 + TerrainHeight;% Ft
         PreApproachSegment = 500; %m This is pre-approach track in level flight
         
     else

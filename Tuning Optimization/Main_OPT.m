@@ -14,7 +14,7 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 %OPTIMIZATION SETTINGS
 gaopt.PopulationSize = 200;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 60*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime =16*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -26,10 +26,10 @@ WithTail = 1;
 FTV                        = 4; % Vehicle Generation 
 vehicleType                = "A";
 testPlans.CG                = [ "TBF5" ];
-testPlans.mass              = [ "MID" ];    % Placeholder for 7P
+testPlans.mass              = [ "LDG" ];    % Placeholder for 7P
 testPlans.inertiaScale      = [0];         % Inertia scale
 
-testPlans.descentSlope      = [3]; % Target descent slope (deg)
+testPlans.descentSlope      = [2.75]; % Target descent slope (deg)
 testPlans.speedOffset       = [0]; % Offset to approach speed target (m/s)
 testPlans.rolloutTrackOffset= [0]; % At Touchdown offset track rollout control tracks (m)
 
@@ -61,9 +61,9 @@ pilotTime = 20; % s - time of maneuver
 trimTime = 10; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
-Q = 0.5;
-R = 100;
-C = 100;
+Q = 50;
+R = 1000;
+C = 100000;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -85,14 +85,14 @@ axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
 %Parameter resolution [Kp ki kd pitchbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.05];
+gain_resolution = [1/0.01 1/0.01 1/0.01];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [0.1, 0.1, 0.1];
-ub.pitch = [1.5, 1.5, 1.5];
+lb.pitch = [0.2, 0.2, 0.2];
+ub.pitch = [0.8, 0.8, 0.8];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -144,7 +144,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [0.4 0.5 0.5];
+    Initialparam = [0.47 0.2 0.53];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
