@@ -44,17 +44,17 @@ nMin_User   = -1.3;     % in g; from the point of view of structure
 m = MassBWB; % Use true model mass (representative of mass estimation in controller)
 
 % Lateral Axis
-XInertia = 103.6929;   % kgm^2 % Updated TBF4-TOW1
+XInertia = 103.6929;   % kgm^2 % Updated TBF5-TOW1
 
 % XInertia=IXX/3417.17; % Direct from model configuration
 
 % Pitch Axis
-YInertia = 129.6293;  % kgm^2 % Updated TBF4-TOW1
+YInertia = 129.6293;  % kgm^2 % Updated TBF5-TOW1
 
 % YInertia=IYY/3417.17;   % Direct from model configuration
 
 % Directional Axis
-ZInertia = 217.7201;  % kgm^2 % Updated TBF4-TOW1
+ZInertia = 217.7201;  % kgm^2 % Updated TBF5-TOW1
 
 % ZInertia=IZZ/3417.17;  % Direct from model configuration
 
@@ -153,10 +153,10 @@ PitchMin    = -PitchMax;
 ElevatorTrim =-3.5; % default: -5
 
 % RC 2 Pitch to Pitch Rate Adjustments
-PitchRateError2Accel    = 1.98; %1.7, 
-PitchRateErrorInt2Accel = 1.38; %1, 
-PitchDampingTrust       = 0.15;
-PitchStiffnessTrust     = 0.38;
+PitchRateError2Accel    = 2; %1.7, 
+PitchRateErrorInt2Accel = 3; %1, 
+PitchDampingTrust       = 0;
+PitchStiffnessTrust     = 0;
 
 PitchMaxAccel   = 2.0; % rad/s^2; used in rate limiter
 
@@ -171,7 +171,7 @@ PitchRateMax_User   = PitchRateMax_User/180*pi; % rad/s, used in saturation bloc
 ElevatorMax         = 25; %deg
 
 %Low pass filters
-PitchBandwidth  = 0.71; %Hz
+PitchBandwidth  = 0.5; %Hz
 
 Fp_Pitch        = 0.55*2*pi*PitchBandwidth; % used for generating pitch rate command
 Fp_Pitch_2      = 0.55*2*pi*PitchBandwidth*dt; % used in the low pass filter for lift coefficient

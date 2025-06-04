@@ -87,14 +87,14 @@ axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
 %Parameter resolution [Kp ki kdt kst pitchbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05 1/0.05];
+gain_resolution = [1/0.05 1/0.05 1/0.05];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [1, 1, 0.1, 0.1, 0.5];
-ub.pitch = [3, 3, 1, 1, 1.5];
+lb.pitch = [1, 1, 0.2];
+ub.pitch = [5, 5, 1.5];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -146,7 +146,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [1.98 1.38 0.15 0.38 0.71];
+    Initialparam = [2 3 0.5];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
