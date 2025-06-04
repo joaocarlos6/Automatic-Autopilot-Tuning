@@ -17,15 +17,6 @@ modelScale          = '16P5';
 CLAWs_On = 0; % We elect to disable internal BA CLaws for now...    
 % dt = 0.02; %Control model loop update rate is controlled by this step. use 20ms for Piccolo 
 
-% Use to control Piccolo states. Set to 1 for flight modes. Set to 0 to use
-% landing modes. This can be set conditionally during simulation
-% eventually.
-inFlight = 1;
-AltCruise_m = Alt * 0.3048; % Cruising Alt, m
-
-% Longitudinal Control Mode (0 == Alt Priority, 1 == Airspeed Priority)
-LonMode = 0;
-
 %% Piccolo Controller Gains
 % any low pass filters should have a cut-off frequency lower than
 % 1/2*50Hz=25Hz, which is called the Nyquist frequency; otherwise

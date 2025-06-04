@@ -1,7 +1,7 @@
 %% SimulationInitialization.m
 % AUTHOR :Stephen Warwick
-% MODIFIED: Joao Figueira
-% April 5, 2025
+% MODIFIED: Stephen Warwick
+% May 15, 2025
 % Description:
 disp('SimulationControlConfig');
 %% Initialize Simulation Workspace
@@ -9,22 +9,15 @@ if ~exist('NoiseStd','var')
     SimulationSensorConfig;
 end
 
-PiccoloGainVersion  = "G75 Landing F0";
-ControlAllocation   = "M2 FTD";
+PiccoloGainVersion  = "G75 Landing with FixeD Flaps F2 No Slats";
+ControlAllocation   = "M2 Built-In-SplitAil";
 modelScale          = '16P5';
 
 %% Define Control Parameters for Simulation
 CLAWs_On = 0; % We elect to disable internal BA CLaws for now...    
 % dt = 0.02; %Control model loop update rate is controlled by this step. use 20ms for Piccolo 
 
-% Use to control Piccolo states. Set to 1 for flight modes. Set to 0 to use
-% landing modes. This can be set conditionally during simulation
-% eventually.
-inFlight = 1;
-AltCruise_m = Alt * 0.3048; % Cruising Alt, m
-
-% Longitudinal Control Mode (0 == Alt Priority, 1 == Airspeed Priority)
-LonMode = 0;
+AltCruise_m = Alt * 0.3048;
 
 %% Piccolo Controller Gains
 % any low pass filters should have a cut-off frequency lower than
@@ -35,9 +28,9 @@ LonMode = 0;
 Sw          = 4.663;% m^2
 b           = 5.54; % m;wing span
 c           = Sw/b; % m;average wing chord
-CL_Max      = 0.54;
-CL_Max_Nom  = 0.465;
-CL_cruise   = 0.300;
+CL_Max      = 0.638;
+CL_Max_Nom  = 0.563;
+CL_cruise   = 0.310;
 
 % documentation says above and says during TouchDown, use CL_Limit=CL_Max;
 CL_Limit    = CL_Max;   % During Short Final/Touchdown this is relaxed to CL_Max limit
@@ -51,17 +44,17 @@ nMin_User   = -1.3;     % in g; from the point of view of structure
 m = MassBWB; % Use true model mass (representative of mass estimation in controller)
 
 % Lateral Axis
-XInertia = 101.734;  % kgm^2 % Updated TBF4-TOW1
+XInertia = 103.6929;   % kgm^2 % Updated TBF4-TOW1
 
 % XInertia=IXX/3417.17; % Direct from model configuration
 
 % Pitch Axis
-YInertia = 134.120;  % kgm^2 % Updated TBF4-TOW1
+YInertia = 129.6293;  % kgm^2 % Updated TBF4-TOW1
 
 % YInertia=IYY/3417.17;   % Direct from model configuration
 
 % Directional Axis
-ZInertia = 220.986;  % kgm^2 % Updated TBF4-TOW1
+ZInertia = 217.7201;  % kgm^2 % Updated TBF4-TOW1
 
 % ZInertia=IZZ/3417.17;  % Direct from model configuration
 
@@ -297,7 +290,7 @@ taxiTrackOffset = testPlans(testIndx).rolloutTrackOffset; %m, to command offset 
 % here but does not match Piccolo implementation!
 % Below is the correct formula:
 IASmin          = sqrt(2*m*9.81/(1.225*Sw*0.9*CL_Max_Nom));
-IASmax          = 46; % Set as static limit (ldg limits)
+IASmax          = 52; % Set as static limit (ldg limits)
 IASstall        = sqrt(2*m*9.81/(1.225*Sw*CL_Max));
 IAScruiseCMD    = sqrt(2*m*9.81/(1.225*Sw*CL_cruise));
 
@@ -308,28 +301,38 @@ ClimboutTimer   = 7.0; %s, time from start of climbout until advancing to Flight
 %% Flaps
 % Limits
 % flapMax     = 0;  % Disabled
-% flapMax     = 33; % Vanilla Flaps
-% flapMax     = 25; % Flaperons
-flapMax     = 35; % Split Aileron (FTD)
+% flapMax     = 33; % Fowler Flaps F3
+flapMax     = 33; % Fowler Flaps F2
 
 flapRate    = 7.5; % FTD delpoyment rate (deg/s)
 % flapRate    = 6.6; % FLAP
 % flapRate    = 3; % FLAPERON deployment rate (deg/s)
 
 % Aero params
-dCl_per_dFlap = 0; % No CL change when using split ailerons. Unknown for Flaperon 
+dCl_per_dFlap = 0.0065; % No CL change when using split ailerons. Unknown for Flaperon 
 % dCl_per_dFlap = 0.005581818; %[/deg]
 % estimate to sim
 
 dCd_per_dFlap = 0; %[/deg] Change in Cd per flap deflection. Appears unused in controller.. 
 
 % Flap commands per mode (deg)
-goAroundFlaps   = 0;
-downwindFlaps   = 0;
-baseLegFlaps    = 20;
-finalApproachFlaps  = 20;
-shortFinalFlaps     = 20; 
-rolloutFlaps        = 30;
+goAroundFlaps   = 15;
+downwindFlaps   = goAroundFlaps;
+baseLegFlaps    = goAroundFlaps;
+finalApproachFlaps  = goAroundFlaps;
+shortFinalFlaps     = goAroundFlaps; 
+rolloutFlaps        = goAroundFlaps;
+
+% Split Aileron commands per mode (deg)
+% Used in M2 Built-In-SplitAil and coded in the APM software (not Pic controller)
+SplitAilMax = 33;
+SplitAilRate    = 7.5; % Split-Ailerons delpoyment rate (deg/s)
+goAroundSplitAil   = 0;
+downwindSplitAil   = 0;
+baseLegSplitAil    = 20;
+finalApproachSplitAil  = 20;
+shortFinalSplitAil     = 20; 
+rolloutSplitAil        = 30;
 
 % IF using M2 with basic flaps, OR FTD Mixing,
 % this offset applied to elevons/flaperons when flaps commanded over 15.5 deg
@@ -337,25 +340,15 @@ rolloutFlaps        = 30;
 elevonBias = 0;
 
 %% Landing / Flare Control
-% Flap-up
-IASfinalCMD = 1.14 * IASmin;
-IASshortCMD = 1.14 * IASmin;
+
+% IASfinalCMD = ((-0.00546 * finalApproachFlaps) + 1.12436) * IASmin;
+% IASshortCMD = IASfinalCMD;
+% IASflareCMD = 0.0 * IASmin;
+
+% Flaps 15
+IASfinalCMD = 1.10 * IASmin;
+IASshortCMD = 1.09 * IASmin;
 IASflareCMD = 0.0 * IASmin;
-
-% Flapped 15
-% IASfinalCMD = 1.04 * IASmin;
-% IASshortCMD = 1.04 * IASmin;
-% IASflareCMD = 0.0 * IASmin;
-
-% Flaps 25
-% IASfinalCMD = 0.98 * IASmin;
-% IASshortCMD = 0.98 * IASmin;
-% IASflareCMD = 0.0 * IASmin;
-
-% Flaps 33
-% IASfinalCMD = 0.94 * IASmin;
-% IASshortCMD = 0.94 * IASmin;
-% IASflareCMD = 0.0 * IASmin;
 
 %Speed Fraction Protection Limits
 if IASshortCMD < IASstall
@@ -398,10 +391,10 @@ RolloutWingLeveling     = 1;
 
 %% Launch
 % Elevator in Transition Phase
-LaunchRollingElevator   =-1.5; % deg
+LaunchRollingElevator   = 1.25; % deg
 RotationElevator        = -6.5;% deg
 RotationTime            = 5;   % s
-RotationSpeedFraction   = 1.23;
+RotationSpeedFraction   = 1.14;
 
 PrelaunchBrakes = 0.10;
 

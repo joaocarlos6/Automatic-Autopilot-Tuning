@@ -1,7 +1,7 @@
 %% SimulationInitialization.m
 % AUTHOR :Stephen Warwick
 % MODIFIED: Stephen Warwick
-% February 03, 2022
+% August 22, 2022
 % Description:
 disp('SimulationAircraftConfig');
 %% Initialize Simulation Workspace
@@ -20,9 +20,10 @@ end
 
 %% Define Aircraft Model Parameters for Simulation
 
+    Flap                 = FlapConfig;% 0,1,2,3
     HStab                = 0;% Deg
     CGShifterInitPosn_ft = 0; % ft - inital position of CG shifter
-   
+    
     if FTV==2
         CGConfig        = testPlans(testIndx).CG;
         InertiaScale    = testPlans(testIndx).inertiaScale; % scale as percentage from test plan
@@ -51,22 +52,23 @@ end
         % Can optionally set custom CG posn but accuracy may vary...
         %%xCgLocMacBWB_custom = testPlans(testIndx).CG;
         %%CGConfig = "SIMULATION"; % This will fall through CG switch statement to allow overriding of CG value
-        FTV3F_flag = 0;
         
+        FTV3F_flag = 0;
         if(vehicleType == "C")
             FTV3C % Charlie config script
         elseif(vehicleType == "D")
             FTV3D % Delta config script
         elseif(vehicleType == "E")
-            FTV3E % Echo
+            FTV3E % Echo config script            
         elseif(vehicleType == "F")
             FTV3F % Echo config script
-            FTV3F_flag = 1; 
+            FTV3F_flag = 1;
+            
         else
             error("Unsupported Gen 3 model!");
         end
         
-        Cbar                    = 0.666;
+        Cbar                    = 0.666;  
         XCG_m                   = (xCgLocMacBWB/100*Cbar + 0.37569);        % CG location relative to nose [m] WARNING: 0.37569 NEEDS TO BE UPDATED FOR 16.5%
         XCG                     = (XCG_m/0.07)/0.0254 * 0.6412 - 253.52;    % CG % = 0.6412*In - 253.52 
         xCgLocMacConventional   = (xCgLocMacBWB * 2.4028) - 118.03;         % Conventional or "Skinny" Mac location
@@ -102,7 +104,7 @@ end
     % Additional transport delay for verification
     AdditionalLatency = 0.010 + testPlans(testIndx).delay; % 0.01s
 
-    EngineLhFuelCut = 0;
+    EngineLhFuelCut = 0;    
     if (EngineLhFuelCut)
         warning("Left Engine Fuel Cut Configured!")
     end

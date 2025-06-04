@@ -9,7 +9,7 @@ if ~exist('NoiseStd','var')
     SimulationSensorConfig;
 end
 
-PiccoloGainVersion = "G76 (Gen " + FTV +")";
+PiccoloGainVersion = "G76 C (Gen " + FTV +")";
 modelScale = '7P';
 
 disp("* 7P UTAIL *")
@@ -18,15 +18,6 @@ disp("Gains: " + PiccoloGainVersion)
 %% Define Control Parameters for Simulation
 CLAWs_On = 0; % We elect to disable internal BA CLaws for now...    
 dt = 0.02; %Control model loop update rate is controlled by this step. use 20ms for Piccolo 
-
-% Use to control Piccolo states. Set to 1 for flight modes. Set to 0 to use
-% landing modes. This can be set conditionally during simulation
-% eventually.
-inFlight = 1;
-AltCruise_m = testPlans(testIndx).terrainElevation * 0.3048 + 152; % Climb to 500ft AGL
-
-% Longitudinal Control Mode (0 == Alt Priority, 1 == Airspeed Priority)
-LonMode = 0;
 
 %% Control Allocation Configuration
 ControlAllocation = "M2"; % Mixing Matrix M8 for tailless

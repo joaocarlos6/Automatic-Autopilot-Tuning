@@ -14,10 +14,10 @@ end
 if ~exist('TrimSetup','var')
     %This should be defined in the SimulationStateConfig Normally
     
-    TrimSetup   = 'Piccolo';
+    %TrimSetup   = 'Piccolo';
 %     TrimSetup   = 'OpenLoopStraightAndLevel';
     
-    % TrimSetup   = 'OpenLoopOnGround';
+    TrimSetup   = 'OpenLoopOnGround';
 end
 if ~exist('simTime','var')
     simTime = 110; %s 
@@ -27,43 +27,69 @@ if ~exist('PackageFlag','var')
 end
 
 % Define name and location of FDM on fileserver     
-% FDMPath     = 'R:\0080-BA-16.5PCNT BWB HWIL SIMULATION\DESIGN\5 - FDM RELEASES\'; %CfAR Fileserver FDM Store
-FDMRelease  = 38;
+FDMPath     = 'R:\0080-BA-16.5PCNT BWB HWIL SIMULATION\DESIGN\5 - FDM RELEASES\'; %CfAR Fileserver FDM Store
+FDMRelease  = 40;
 
 disp("FDM Version: " + FDMRelease)
 %% Model Configuration Parameters
-
-FDMPath = 'lib\Flight Dynamics Model\'; %Local Reference for distribution to remote machines
+if PackageFlag == 1
+    %When manual run is set, the working directory is one level up
+    if(manualRun > 0)
+        FDMPath = 'Libraries\Flight Dynamics Model\'; %Local Reference for runs on local machine
+    else
+        FDMPath = 'Flight Dynamics Model\'; %Local Reference for distribution to remote machines
+    end
+end
 
 % Define Model
-if FDMRelease == 38
+if FDMRelease == 40
+    FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver40\T507Sim';
+    if modelScale == "7P"
+       if FTV3F_flag == 1
+            %this is FTV3F
+            FDMDLL  = 't507_7p_T507_7P_sim_Top3_42_Opt2.mexw64';
+        elseif FTV3F_flag == 0
+            %this is FTV3E
+            FDMDLL  = 't507_7p_T507_7P_sim_Top3_42_1_1_Opt2.mexw64';
+        end
+    elseif modelScale == "16P5"
+        FDMDLL      = 't507_16p5_T507_16P5_sim_Top1_76_Opt2.mexw64';
+    end  
+elseif FDMRelease == 38
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver38\T507Sim';
     if modelScale == "7P"
         FDMDLL      = 't507_7p_T507_7P_simt_Top3_37_2_1_Opt2.mexw64';
     elseif modelScale == "16P5"
         FDMDLL      = 't507_16p5_T507_16P5_sim_Top1_74_Opt2.mexw64';
-    end
+    end  
 elseif FDMRelease == 37
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver37\T507Sim';
     if modelScale == "7P"
         FDMDLL      = 't507_7p_T507_7P_simTop3_36_Opt2.mexw64';
     elseif modelScale == "16P5"
         FDMDLL      = 't507_16p5_T507_16P5_sim_Top1_73_Opt2.mexw64';
-    end
+    end  
 elseif FDMRelease == 36
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver36\T507Sim';
     if modelScale == "7P"
         FDMDLL      = 't507_7p_T507_7P_simTop3_36_Opt2.mexw64';
     elseif modelScale == "16P5"
         FDMDLL      = 't507_16p5_T507_16P5_sim_Top1_71_Opt2.mexw64';
-    end
+    end  
 elseif FDMRelease == 35
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver35\T507Sim';
     if modelScale == "7P"
         FDMDLL      = 't507_7p_T507_7P_sim_Top3_34_Opt2.mexw64';
     elseif modelScale == "16P5"
         FDMDLL      = 't507_16p5_T507_16P5_sim_Top1_71_Opt2.mexw64';
-    end
+    end  
+elseif FDMRelease == 34
+    FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver34\T507Sim';
+    if modelScale == "7P"
+        FDMDLL      = 't507_7p_T507_7P_sim_Top3_28_Opt2.mexw64';
+    elseif modelScale == "16P5"
+        FDMDLL      = 't507_16p5_T507_16P5_sim_Top1_71_Opt2.mexw64';
+    end    
 elseif FDMRelease == 33
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver33\T507Sim';
     if modelScale == "7P"
@@ -129,14 +155,14 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
     if isempty(SimObj)
         % Create Object, first call only.
         try
-            SimObj = CompiledSimulink(DLL_Name); % Sim Object Processing
+        SimObj = CompiledSimulink(DLL_Name); % Sim Object Processing
         catch e
             disp(e.message)
         end
         SimObj.NUM_ITER_TO_PROPAGATE_ORDINARY_NTSTATES = 4;
-        
+
         % FTV selection
-        if (isequal(SimObj.Param.ac_type,507.07)) && (FDMRelease >= 36)
+        if isequal(SimObj.Param.ac_type,507.07) && (FDMRelease >= 36)
             SimObj.fadd('Defaults','Settings','Param.Vehicle_Type', FTV3F_flag); % 0 = FTV3E (default), 1 = FTV3F
         end
         
@@ -291,7 +317,12 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
 
             SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeTlaLhCmd_Deg');
             SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeTlaRhCmd_Deg');
-            SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeStabCmd',5);
+            if isequal(SimObj.Param.ac_type,507.16) && (FDMRelease >= 40)      
+                SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeStabLhCmd',5);
+                SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeStabRhCmd',5);
+            else
+                SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeStabCmd',5);
+            end
 
             SimObj.fadd('OpenLoopStraightAndLevel','X','DState.UFtps');
             SimObj.fadd('OpenLoopStraightAndLevel','X','DState.WFtps');
@@ -487,7 +518,7 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
 
     end
 
-
+    
 %% Config definitions
 
     SimObj.fdeactivate;SimObj.fadd(TrimSetup,'fsetup',['Flap',num2str(Flap),'Definition']);
@@ -495,21 +526,20 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
     SimObj.fadd(TrimSetup,'Settings','Input.RefWindDirDeg',WindDir_Deg);
     SimObj.fadd(TrimSetup,'Settings','Input.RefWindSpdKts',WindSpd_Kts);
     SimObj.fadd(TrimSetup,'Settings','Input.VertWindSpdKts',WindVertSpd_Kts);
-    SimObj.fadd(TrimSetup,'Settings','Input.FlapSlatLvrDetent',Flap);
     SimObj.fadd(TrimSetup,'Settings','OutputDemand.TrackDeg',Track);
+    SimObj.fadd(TrimSetup,'Settings','Input.FlapSlatLvrDetent',Flap);
     SimObj.fadd(TrimSetup,'Settings','DState.ZposnFt',-TerrainHeight);
     SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotInitCgPosn_Ft',XCG);
     SimObj.fadd('OpenLoopOnGround','Settings','DState.PsiRad',Track*pi/180);
+    SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotStabAutoTrimEnabled',1);
+    SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotStabCmd_Deg',HStab);    
     SimObj.fadd('OpenLoopOnGround','Settings','Param.RnwFreqHz',0);
     SimObj.fadd('OpenLoopOnGround','Settings','Param.Flight_RnwLatDeg',Latitude);
     SimObj.fadd('OpenLoopOnGround','Settings','Param.Flight_RnwLongDeg',Longitude);
     SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotCgCmd_Pct',CGShifterInitPosn_ft);
 
-    if isequal(SimObj.Param.ac_type,507.16)
-        SimObj.fadd(TrimSetup,'Settings','Param.WSM_Posn_FdbkFromCmd',1);
-    end
-    
     SimObj.factivate(TrimSetup);
+
 
     FlightCondLoadDefn(SimObj, AcSetup,'AltitudeFt',Alt,'SpeedKts',Speed,...
                 'Weight',Weight,'XCG',XCG,'YCG',YCG,'ZCG',ZCG,...
@@ -617,7 +647,6 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
     Inz.Param.REFSI_FD_IN_nmodeAilRhUpperCmd_Deg    = 0;
     Inz.Param.REFSI_FD_IN_nmodeAilRhLowerCmd_Deg    = 0;
     Inz.Param.REFSI_FD_IN_nmodeRudRhWingCmd_Deg     = 0;
-    Inz.Param.REFSI_FD_IN_nmodeStabCmd              = 0;
     Inz.Param.REFSI_FD_IN_nmodeFlapLhOBCmd_Deg      = 0;
     Inz.Param.REFSI_FD_IN_nmodeFlapLhIBCmd_Deg      = 0;
     Inz.Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg        = 0;
@@ -628,7 +657,7 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
     Inz.Param.REFSI_FD_IN_nmodeTlaRhCmd_Deg         = 0;
     Inz.Input.EngineLhFuelCut                       = 0;
     Inz.Input.EngineRhFuelCut                       = 0;
-    Inz.Input.NWCastoring              				= 0; 
+    Inz.Input.NWCastoring              				= 0;
     Inz.Param.REFSI_FD_IN_nmodeNoseGearCmd_Deg      = 0;
     Inz.Param.REFSI_FD_IN_nmodeSplrLhOutbdCmd_Deg   = 0;
     Inz.Param.REFSI_FD_IN_nmodeSplrLhInbdCmd_Deg    = 0;
@@ -648,9 +677,17 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
     if isequal(SimObj.Param.ac_type,507.16) && (FDMRelease >= 38)    
         Inz.Param.REFSI_FD_IN_nmodeCgShifterCmd_Flag    = 101; 
         Inz.Param.REFSI_FD_IN_nmodeCgShifterNRCActive   = 1;
+        if (FDMRelease >= 40)
+            Inz.Param.REFSI_FD_IN_nmodeStabLhCmd              = 0;
+            Inz.Param.REFSI_FD_IN_nmodeStabRhCmd              = 0;
+        else
+            Inz.Param.REFSI_FD_IN_nmodeStabCmd              = 0;
+        end
+    else
+        Inz.Param.REFSI_FD_IN_nmodeStabCmd              = 0;
     end
-    
-    % Define SaveList - Can be changed Dynamically
+
+% Define SaveList - Can be changed Dynamically
     DLLSim.SaveList={
         'Signal.PresAltFt'
         'Signal.AlphaDeg'
@@ -797,8 +834,7 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
         'Param.REFSI_AC_OUT_nmodeRudRhWingCmd_Deg'
         };
     
-    
-    
+        
     
     if isequal(SimObj.Param.ac_type,507.07)
         DLLSim.SaveList = [DLLSim.SaveList;
@@ -908,6 +944,13 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
             'Signal.ismSplrRhOutbdPosn_Deg'
             'Signal.ismCgShifterPosn_Ft'
             'Signal.ismHeightAboveGround_Ft'
+            'Signal.WSM_State'
+            'Signal.CgShifterVel_Fts'
+            'Signal.CgShifterHealthCode'
+            'Signal.CgShifterCmd_Ft'
+            'Signal.CgShifterCmd_Flag'
+            'Signal.StabLhPosnDeg'
+            'Signal.StabRhPosnDeg'
         ];
     end
 
@@ -916,12 +959,6 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
 
     DLLSim.nOuputs = length(DLLSim.SaveList);
 
-    %% Consistency check for Parameters known to require DLL Re-Load (we need a better solution for this)
-    if SimObj.Param.IAR166_UTail_ON ~= WithTail
-        error('DLL WithTail configuration inconsistent with user workspace. Recommend re-loading Project or changing WithTail in ConfigureMe m-file');
-    end
-    
-    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 

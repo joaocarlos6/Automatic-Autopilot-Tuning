@@ -21,11 +21,11 @@ if WithTail==1   %UTAIL
         %FWD, BASE, AFT, TBF
         switch CGConfig
             case "FWD"
-                xCgLocMacBWB = 59.11;% PERCENT MAC BWB
+                xCgLocMacBWB = 57.75;% PERCENT MAC BWB
             case "BASE"
-                xCgLocMacBWB = 59.94;% PERCENT MAC BWB
+                xCgLocMacBWB = 59.00;% PERCENT MAC BWB
             case "AFT"
-                xCgLocMacBWB = 61.6;% PERCENT MAC BWB
+                xCgLocMacBWB = 60.25;% PERCENT MAC BWB
             otherwise
                 error("something wrong with xCgLocMac parameter selection");
         end

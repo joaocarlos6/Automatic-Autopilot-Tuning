@@ -13,50 +13,24 @@ end
 % H-Stab initial position is set with variable HStab defined in
 % SimulationAircraftConfig.m
 
+HStab_Offset = 0;
+
 %% Control Logic Parameters
 % Logic Configuration
-HStabSystem.InitSP = Trim_REFSI_FD_IN_nmodeStabCmd; % deg
-HStabSystem.CmdRate = 3.6; % deg/s
+HStabSystem.InitSP = HStab; % deg
+HStabSystem.CmdRate = 2; % deg/s
 HStabSystem.KI = 0.11; 
 HStabSystem.LPFalpha = 0.20735;
 
 % Failure Detection
-HStabSystem.LimitUpper = 9; % deg
-HStabSystem.LimitLower = -7; % deg
+HStabSystem.LimitUpper = 8.5; % deg
+HStabSystem.LimitLower = -6.75; % deg
 HStabSystem.PosTol = 0.5; % deg
 HStabSystem.ElvDivUpper = 15; % deg
 HStabSystem.ElvDivLower = -15; % deg
+HStabSystem.ServoTimeout = 0.06; % sec
 
 %% BUS DEFINITIONS
-%% MSG_Statues
-busElements(1) = Simulink.BusElement;
-busElements(1).Name = 'GS_status';
-busElements(1).DataType = 'boolean';
-
-busElements(2) = Simulink.BusElement;
-busElements(2).Name = 'pitch_cmd_status';
-busElements(2).DataType = 'boolean';
-
-busElements(3) = Simulink.BusElement;
-busElements(3).Name = 'Piccolo_msg_status';
-busElements(3).DataType = 'boolean';
-
-busElements(4) = Simulink.BusElement;
-busElements(4).Name = 'APM_msg_status';
-busElements(4).DataType = 'boolean';
-
-busElements(5) = Simulink.BusElement;
-busElements(5).Name = 'Left_Stab_Status';
-busElements(5).DataType = 'boolean';
-
-busElements(6) = Simulink.BusElement;
-busElements(6).Name = 'Right_Stab_Status';
-busElements(6).DataType = 'boolean';
-
-Msg_Statuts_Bus = Simulink.Bus;
-Msg_Statuts_Bus.Elements = busElements;
-clear busElements;
-
 %% Fail Flag
 busElements(1) = Simulink.BusElement;
 busElements(1).Name = 'Left_Surf_Status';
@@ -67,24 +41,28 @@ busElements(2).Name = 'Right_Surf_Status';
 busElements(2).DataType = 'boolean';
 
 busElements(3) = Simulink.BusElement;
-busElements(3).Name = 'AT_Status';
+busElements(3).Name = 'AT_Safety';
 busElements(3).DataType = 'boolean';
 
 busElements(4) = Simulink.BusElement;
-busElements(4).Name = 'Elv_Cmd_Rcv';
+busElements(4).Name = 'AT_Performance';
 busElements(4).DataType = 'boolean';
 
 busElements(5) = Simulink.BusElement;
-busElements(5).Name = 'Stab_Cmd_Rcv';
+busElements(5).Name = 'Elv_Cmd_Rcv';
 busElements(5).DataType = 'boolean';
 
 busElements(6) = Simulink.BusElement;
-busElements(6).Name = 'APM_Rcv';
+busElements(6).Name = 'Stab_Cmd_Rcv';
 busElements(6).DataType = 'boolean';
 
 busElements(7) = Simulink.BusElement;
-busElements(7).Name = 'Mode_Cmd_Rcv';
+busElements(7).Name = 'APM_Rcv';
 busElements(7).DataType = 'boolean';
+
+busElements(8) = Simulink.BusElement;
+busElements(8).Name = 'Mode_Cmd_Rcv';
+busElements(8).DataType = 'boolean';
 
 Fail_Flag_Bus = Simulink.Bus;
 Fail_Flag_Bus.Elements = busElements;

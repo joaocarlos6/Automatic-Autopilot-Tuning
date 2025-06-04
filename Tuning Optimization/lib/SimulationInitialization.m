@@ -10,7 +10,7 @@ if ~exist('TrimMaxIterations','var')
     TrimMaxIterations = 8; % FDM Trim Iterations on Init. Default is 100, do not go below 6 for ground Trim!
 end
 if ~exist('simTime','var')
-   simTime = 150; %s  
+   simTime = 180; %s  
 end
 
 simulatorMode="Desktop";
@@ -34,7 +34,7 @@ disp("LatencyConfig Complete");
 
 % Select sensor configuration
 if(FTV == 4)
-   SimulationSensorConfig16P 
+   SimulationSensorConfig16P  
    disp("SensorConfig 16P Complete");
 else
    if(WithTail)
@@ -54,8 +54,13 @@ disp("StateConfig Complete");
 
 % Select control configuration
 if(FTV == 4)
-    SimulationControlConfig16P;
-    disp("16P UTAIL Control Complete");
+   if Flap == 0
+       SimulationControlConfig16P
+       disp("16P5 F0 UTAIL Control Complete");
+   elseif Flap == 2
+       SimulationControlConfig16P_F2
+       disp("16P5 F2 UTAIL Control Complete");
+   end
 else
     if(WithTail)
         if vehicleType == "F"
@@ -86,6 +91,12 @@ if (FTV == 4)
     disp("H-Stab Configuration Complete");
     SimulationWSMConfig
 end
+
+SimulationCostFunction
+disp("Cost Complete");
+
+%% Run Verification Scripts
+% VerificationLanding
 
 %%
 disp('Time Taken For Simulation Setup/Trimming')

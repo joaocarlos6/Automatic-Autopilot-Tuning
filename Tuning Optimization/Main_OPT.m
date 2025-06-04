@@ -5,7 +5,7 @@ clc
 addpath(genpath("lib\"))
 
 %% OPTIONS
-optimizationName = 'Piccolo_FTV4A_AFT_CG';
+optimizationName = 'Piccolo_FTV4A_F2_CG';
 dev_mode = true;        %Setting this to true enables developer mode which disables some features making it faster to run the code
 % flag_optfilter = 0;     %1-Optimize DGYRO low pass filter, 0-No filter optimization of DGYRO
 % flag_noise = 1;         %0-to disable noise, 1-to enable noise
@@ -14,14 +14,14 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 %OPTIMIZATION SETTINGS
 gaopt.PopulationSize = 300;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 6.5*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 19*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
 
 %% Simulation settings
 WithTail = 1;
-Flap = 0;
+FlapConfig = 2;
 
 % Vehicle
 FTV                        = 4; % Vehicle Generation 
@@ -62,10 +62,10 @@ pilotTime = 30; % s - time of maneuver
 trimTime = 5; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
-Q = 10000;
-R = 2;
-C = 0.01;
-D = 10;
+Qq = 2;
+Rr = 0.6;
+Cc = 0.005;
+Dd = 9;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -146,7 +146,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [1.2 1.75 0.3 0.3 0.8];
+    Initialparam = [1.98 1.38 0.15 0.38 0.71];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
