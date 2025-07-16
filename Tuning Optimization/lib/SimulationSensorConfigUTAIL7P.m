@@ -49,7 +49,7 @@ PiccoloStaticPositionCorrection = 1.00;
 %% WOW
 SensorModel.WOW.Cell.WOWtransportDelay = 1; % 20 ms sampling delay addtional to 20ms comms
 
-SensorModel.WOW.Cell.Variant = "LOAD23";
+SensorModel.WOW.Cell.Variant = "LOAD20";
 % Load Cell based WOW with Switch/Latch Characteristics
 SensorModel.WOW.Cell.ConfigurationVersion = SensorModel.WOW.Cell.Variant + ", 0.0s persistance, Latch:0.4s, Loads1:6.5N upper, 3.5N lower, 0.4s Single Wheel Timeout, 40ms TOTAL Delay.";
 
@@ -75,10 +75,8 @@ SensorModel.WOW.Cell.dynamicTrigger         = 8;    % N, Trigger threshold to sw
 SensorModel.WOW.Cell.dynamicWindow          = 20;   % Samples, size of window used to evaluate peak loads for dynamic timer
 
 %Take-Off Extenion of Load Cell (Load2) 
-SensorModel.WOW.Cell.TO_loadThreshold_N     = 21.2;
-SensorModel.WOW.Cell.TO_loadThreshold2_N    = 21.2; %Used in Logic 22 and 23 
+SensorModel.WOW.Cell.TO_loadThreshold_N     = 275 / 13;
 SensorModel.WOW.Cell.TO_persistanceTime_s   = 0.02; % Persistance of 1 sample for Each MLG below load thresh
-SensorModel.WOW.Cell.TO_persistanceTime2_s   = 0.6; 
 SensorModel.WOW.Cell.TO_latchTime_s         = 0.5;
 
 % Input Limits

@@ -5,7 +5,7 @@
 % Description: Used to set H-Stab Interface parameters and bus definitions
 
 %% SIMULATION OPTION
-AutoTrim_On = 1; % 1 to enable auto-trim; 0 to disable
+AutoTrim_On = 0; % 1 to enable auto-trim; 0 to disable
 
 if isempty(HStab)
     SimulationAircraftConfig
@@ -14,7 +14,6 @@ end
 % SimulationAircraftConfig.m
 
 HStab_Offset = 0;
-
 %% Control Logic Parameters
 % Logic Configuration
 HStabSystem.InitSP = HStab; % deg
@@ -28,9 +27,38 @@ HStabSystem.LimitLower = -6.75; % deg
 HStabSystem.PosTol = 0.5; % deg
 HStabSystem.ElvDivUpper = 15; % deg
 HStabSystem.ElvDivLower = -15; % deg
-HStabSystem.ServoTimeout = 0.06; % sec
+HStabSystem.ServoTimeout = 0.06; %s
 
 %% BUS DEFINITIONS
+%% MSG_Statues
+busElements(1) = Simulink.BusElement;
+busElements(1).Name = 'GS_status';
+busElements(1).DataType = 'boolean';
+
+busElements(2) = Simulink.BusElement;
+busElements(2).Name = 'pitch_cmd_status';
+busElements(2).DataType = 'boolean';
+
+busElements(3) = Simulink.BusElement;
+busElements(3).Name = 'Piccolo_msg_status';
+busElements(3).DataType = 'boolean';
+
+busElements(4) = Simulink.BusElement;
+busElements(4).Name = 'APM_msg_status';
+busElements(4).DataType = 'boolean';
+
+busElements(5) = Simulink.BusElement;
+busElements(5).Name = 'Left_Stab_Status';
+busElements(5).DataType = 'boolean';
+
+busElements(6) = Simulink.BusElement;
+busElements(6).Name = 'Right_Stab_Status';
+busElements(6).DataType = 'boolean';
+
+Msg_Statuts_Bus = Simulink.Bus;
+Msg_Statuts_Bus.Elements = busElements;
+clear busElements;
+
 %% Fail Flag
 busElements(1) = Simulink.BusElement;
 busElements(1).Name = 'Left_Surf_Status';
