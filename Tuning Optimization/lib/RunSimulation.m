@@ -20,5 +20,25 @@ function cost = RunSimulation(testIndx)
         end
         assignin('base','costLog',costLog);
 
+    catch e
+        disp(e.message)
+        if e.identifier == "Simulink:blocks:AssertionAssert"
+            simulation_error_message = convertCharsToStrings(e.message);
+        else
+            simulation_error_message = "Simulation Diverged";
+        end
+        assignin('base','simulation_error_message',simulation_error_message);
 
+        cost=1e8; % assign very large cost
+
+        costLog = evalin('base','costLog');
+        costLog.cost(testIndx) = cost;
+        try
+            % Pass to base workspace
+            assignin('base','SimVer',SimVer)
+        catch e
+            %do nothing
+        end
+        assignin('base','costLog',costLog);
+    end
 end

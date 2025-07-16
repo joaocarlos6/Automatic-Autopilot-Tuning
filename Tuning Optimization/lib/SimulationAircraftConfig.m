@@ -20,6 +20,7 @@ end
 
 %% Define Aircraft Model Parameters for Simulation
 
+    Flap                 = FlapConfig;% 0,1,2,3
     HStab                = 0;% Deg
     CGShifterInitPosn_ft = 0; % ft - inital position of CG shifter
    
@@ -60,7 +61,7 @@ end
         elseif(vehicleType == "E")
             FTV3E % Echo
         elseif(vehicleType == "F")
-            FTV3F % Echo config script
+            FTV3F % Foxtrot config script
             FTV3F_flag = 1; 
         else
             error("Unsupported Gen 3 model!");

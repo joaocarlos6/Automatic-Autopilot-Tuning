@@ -14,10 +14,10 @@ end
 if ~exist('TrimSetup','var')
     %This should be defined in the SimulationStateConfig Normally
     
-    TrimSetup   = 'Piccolo';
+    %TrimSetup   = 'Piccolo';
 %     TrimSetup   = 'OpenLoopStraightAndLevel';
     
-    % TrimSetup   = 'OpenLoopOnGround';
+    TrimSetup   = 'OpenLoopOnGround';
 end
 if ~exist('simTime','var')
     simTime = 110; %s 
@@ -27,16 +27,61 @@ if ~exist('PackageFlag','var')
 end
 
 % Define name and location of FDM on fileserver     
-% FDMPath     = 'R:\0080-BA-16.5PCNT BWB HWIL SIMULATION\DESIGN\5 - FDM RELEASES\'; %CfAR Fileserver FDM Store
-FDMRelease  = 38;
+FDMPath     = 'R:\0080-BA-16.5PCNT BWB HWIL SIMULATION\DESIGN\5 - FDM RELEASES\'; %CfAR Fileserver FDM Store
+FDMRelease  = 44;
 
 disp("FDM Version: " + FDMRelease)
 %% Model Configuration Parameters
-
-FDMPath = 'lib\Flight Dynamics Model\'; %Local Reference for distribution to remote machines
-
+if PackageFlag == 1
+    %When manual run is set, the working directory is one level up
+    if(manualRun > 0)
+        FDMPath = 'Libraries\Flight Dynamics Model\'; %Local Reference for runs on local machine
+    else
+        FDMPath = 'Flight Dynamics Model\'; %Local Reference for distribution to remote machines
+    end
+end
+    
 % Define Model
-if FDMRelease == 38
+if FDMRelease == 44
+    FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver44\T507Sim';
+    if modelScale == "7P"
+       if FTV3F_flag == 1
+            %this is FTV3F
+            FDMDLL  = 't507_7p_T507_7P_sim_Top3_45_Opt2.mexw64';
+        elseif FTV3F_flag == 0
+            %this is FTV3E
+            FDMDLL  = 't507_7p_T507_7P_sim_Top3_42_1_1_Opt2.mexw64';
+        end
+    elseif modelScale == "16P5"
+        FDMDLL      = 't507_16p5_T507_16P5_simTop1_77_1_3_Opt2.mexw64';
+    end  
+elseif FDMRelease == 42
+    FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver42\T507Sim';
+    if modelScale == "7P"
+       if FTV3F_flag == 1
+            %this is FTV3F
+            FDMDLL  = 't507_7p_T507_7P_sim_Top3_42_Opt2.mexw64';
+        elseif FTV3F_flag == 0
+            %this is FTV3E
+            FDMDLL  = 't507_7p_T507_7P_sim_Top3_42_1_1_Opt2.mexw64';
+        end
+    elseif modelScale == "16P5"
+        FDMDLL      = 't507_16p5_T507_16P5_simTop1_77_1_3_Opt2.mexw64';
+    end  
+elseif FDMRelease == 40
+    FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver40\T507Sim';
+    if modelScale == "7P"
+       if FTV3F_flag == 1
+            %this is FTV3F
+            FDMDLL  = 't507_7p_T507_7P_sim_Top3_42_Opt2.mexw64';
+        elseif FTV3F_flag == 0
+            %this is FTV3E
+            FDMDLL  = 't507_7p_T507_7P_sim_Top3_42_1_1_Opt2.mexw64';
+        end
+    elseif modelScale == "16P5"
+        FDMDLL      = 't507_16p5_T507_16P5_sim_Top1_76_Opt2.mexw64';
+    end  
+elseif FDMRelease == 38
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver38\T507Sim';
     if modelScale == "7P"
         FDMDLL      = 't507_7p_T507_7P_simt_Top3_37_2_1_Opt2.mexw64';
@@ -291,7 +336,12 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
 
             SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeTlaLhCmd_Deg');
             SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeTlaRhCmd_Deg');
-            SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeStabCmd',5);
+            if isequal(SimObj.Param.ac_type,507.16) && (FDMRelease >= 40)      
+                SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeStabLhCmd',5);
+                SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeStabRhCmd',5);
+            else
+                SimObj.fadd('OpenLoopStraightAndLevel','X','Param.REFSI_FD_IN_nmodeStabCmd',5);
+            end
 
             SimObj.fadd('OpenLoopStraightAndLevel','X','DState.UFtps');
             SimObj.fadd('OpenLoopStraightAndLevel','X','DState.WFtps');
@@ -498,17 +548,15 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
     SimObj.fadd(TrimSetup,'Settings','Input.FlapSlatLvrDetent',Flap);
     SimObj.fadd(TrimSetup,'Settings','OutputDemand.TrackDeg',Track);
     SimObj.fadd(TrimSetup,'Settings','DState.ZposnFt',-TerrainHeight);
-    SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotInitCgPosn_Ft',XCG);
+%     SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotInitCgPosn_Ft',XCG);
     SimObj.fadd('OpenLoopOnGround','Settings','DState.PsiRad',Track*pi/180);
+    SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotStabAutoTrimEnabled',1);
+    SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotStabCmd_Deg',HStab);    
     SimObj.fadd('OpenLoopOnGround','Settings','Param.RnwFreqHz',0);
     SimObj.fadd('OpenLoopOnGround','Settings','Param.Flight_RnwLatDeg',Latitude);
     SimObj.fadd('OpenLoopOnGround','Settings','Param.Flight_RnwLongDeg',Longitude);
     SimObj.fadd(TrimSetup,'Settings','Param.claws_pilotCgCmd_Pct',CGShifterInitPosn_ft);
 
-    if isequal(SimObj.Param.ac_type,507.16)
-        SimObj.fadd(TrimSetup,'Settings','Param.WSM_Posn_FdbkFromCmd',1);
-    end
-    
     SimObj.factivate(TrimSetup);
 
     FlightCondLoadDefn(SimObj, AcSetup,'AltitudeFt',Alt,'SpeedKts',Speed,...
@@ -600,54 +648,66 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
 
 % Static Update List of Inputs to DLL - Do Not Update!
     global Inz;
-    Inz.Param.REFSI_FD_IN_nmodeRudLhWingCmd_Deg     = 0;
-    Inz.Param.REFSI_FD_IN_nmodeAilLhLowerCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeAilLhUpperCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeElvLhOutbdCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeElvLhInbdCmd_Deg     = 0;
-    Inz.Param.REFSI_FD_IN_nmodeRudLhPylonCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeRudLhUTailCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeElvLhUTailCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeAftFlapCmd_Deg       = 0;
-    Inz.Param.REFSI_FD_IN_nmodeElvRhUTailCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeRudRhUTailCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeRudRhPylonCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeElvRhInbdCmd_Deg     = 0;
-    Inz.Param.REFSI_FD_IN_nmodeElvRhOutbdCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeAilRhUpperCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeAilRhLowerCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeRudRhWingCmd_Deg     = 0;
-    Inz.Param.REFSI_FD_IN_nmodeStabCmd              = 0;
-    Inz.Param.REFSI_FD_IN_nmodeFlapLhOBCmd_Deg      = 0;
-    Inz.Param.REFSI_FD_IN_nmodeFlapLhIBCmd_Deg      = 0;
-    Inz.Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg        = 0;
-    Inz.Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg        = 0;
-    Inz.Param.REFSI_FD_IN_nmodeFlapRhOBCmd_Deg      = 0;
-    Inz.Param.REFSI_FD_IN_nmodeFlapRhIBCmd_Deg      = 0;
-    Inz.Param.REFSI_FD_IN_nmodeTlaLhCmd_Deg         = 0;
-    Inz.Param.REFSI_FD_IN_nmodeTlaRhCmd_Deg         = 0;
-    Inz.Input.EngineLhFuelCut                       = 0;
-    Inz.Input.EngineRhFuelCut                       = 0;
-    Inz.Input.NWCastoring              				= 0; 
-    Inz.Param.REFSI_FD_IN_nmodeNoseGearCmd_Deg      = 0;
-    Inz.Param.REFSI_FD_IN_nmodeSplrLhOutbdCmd_Deg   = 0;
-    Inz.Param.REFSI_FD_IN_nmodeSplrLhInbdCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeSplrRhInbdCmd_Deg    = 0;
-    Inz.Param.REFSI_FD_IN_nmodeSplrRhOutbdCmd_Deg   = 0;
-    Inz.Param.REFSI_FD_IN_nmodeCgShifterCmd_Ft      = 0;
-    Inz.Param.piccoloInCmd                          = 0;
-    Inz.Param.claws_pilotNzCmd_g                    = 0;
-    Inz.Param.claws_isControlSurfaceCmdFromSystem   = 0;
-    Inz.Param.claws_nmodeReset                      = 0;
-    Inz.Input.RefWindDirDeg                         = 0;
-    Inz.Input.RefWindSpdKts                         = 0;
-    Inz.Input.VertWindSpdKts                        = 0;
-    Inz.Input.PedalBrakeLh 							= 0;
-    Inz.Input.PedalBrakeRh                          = 0;
+    Inz.Param.REFSI_FD_IN_nmodeRudLhWingCmd_Deg       = 0;
+    Inz.Param.REFSI_FD_IN_nmodeAilLhLowerCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeAilLhUpperCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeElvLhOutbdCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeElvLhInbdCmd_Deg       = 0;
+    Inz.Param.REFSI_FD_IN_nmodeRudLhPylonCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeRudLhUTailCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeElvLhUTailCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeAftFlapCmd_Deg         = 0;
+    Inz.Param.REFSI_FD_IN_nmodeElvRhUTailCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeRudRhUTailCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeRudRhPylonCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeElvRhInbdCmd_Deg       = 0;
+    Inz.Param.REFSI_FD_IN_nmodeElvRhOutbdCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeAilRhUpperCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeAilRhLowerCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeRudRhWingCmd_Deg       = 0;
+    Inz.Param.REFSI_FD_IN_nmodeFlapLhOBCmd_Deg        = 0;
+    Inz.Param.REFSI_FD_IN_nmodeFlapLhIBCmd_Deg        = 0;
+    Inz.Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg          = 0;
+    Inz.Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg          = 0;
+    Inz.Param.REFSI_FD_IN_nmodeFlapRhOBCmd_Deg        = 0;
+    Inz.Param.REFSI_FD_IN_nmodeFlapRhIBCmd_Deg        = 0;
+    Inz.Param.REFSI_FD_IN_nmodeTlaLhCmd_Deg           = 0;
+    Inz.Param.REFSI_FD_IN_nmodeTlaRhCmd_Deg           = 0;
+    Inz.Input.EngineLhFuelCut                         = 0;
+    Inz.Input.EngineRhFuelCut                         = 0;
+    Inz.Input.NWCastoring              				  = 0;
+    Inz.Param.REFSI_FD_IN_nmodeNoseGearCmd_Deg        = 0;
+    Inz.Param.REFSI_FD_IN_nmodeSplrLhOutbdCmd_Deg     = 0;
+    Inz.Param.REFSI_FD_IN_nmodeSplrLhInbdCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeSplrRhInbdCmd_Deg      = 0;
+    Inz.Param.REFSI_FD_IN_nmodeSplrRhOutbdCmd_Deg     = 0;  
+    if isequal(SimObj.Param.ac_type,507.16) && (FDMRelease >= 42)
+        Inz.Param.REFSI_FD_IN_nmodeCgShifterKartPosCmd_Ft      = 0;
+    elseif isequal(SimObj.Param.ac_type,507.07) && (FDMRelease >= 43)
+    else
+         Inz.Param.REFSI_FD_IN_nmodeCgShifterCmd_Ft      = 0;
+    end
+    Inz.Param.piccoloInCmd                            = 0;
+    Inz.Param.claws_pilotNzCmd_g                      = 0;
+    Inz.Param.claws_isControlSurfaceCmdFromSystem     = 0;
+    Inz.Param.claws_nmodeReset                        = 0;
+    Inz.Input.RefWindDirDeg                           = 0;
+    Inz.Input.RefWindSpdKts                           = 0;
+    Inz.Input.VertWindSpdKts                          = 0;
+    Inz.Input.PedalBrakeLh 							  = 0;
+    Inz.Input.PedalBrakeRh                            = 0;
     
     if isequal(SimObj.Param.ac_type,507.16) && (FDMRelease >= 38)    
-        Inz.Param.REFSI_FD_IN_nmodeCgShifterCmd_Flag    = 101; 
+        Inz.Param.REFSI_FD_IN_nmodeCgShifterCmdType    = 101; 
         Inz.Param.REFSI_FD_IN_nmodeCgShifterNRCActive   = 1;
+        if (FDMRelease >= 40)
+            Inz.Param.REFSI_FD_IN_nmodeStabLhCmd              = 0;
+            Inz.Param.REFSI_FD_IN_nmodeStabRhCmd              = 0;
+        else
+            Inz.Param.REFSI_FD_IN_nmodeStabCmd              = 0;
+        end
+    else
+        Inz.Param.REFSI_FD_IN_nmodeStabCmd              = 0;
     end
     
     % Define SaveList - Can be changed Dynamically
@@ -796,10 +856,7 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
         'Param.REFSI_AC_OUT_nmodeAilRhLowerCmd_Deg'
         'Param.REFSI_AC_OUT_nmodeRudRhWingCmd_Deg'
         };
-    
-    
-    
-    
+   
     if isequal(SimObj.Param.ac_type,507.07)
         DLLSim.SaveList = [DLLSim.SaveList;
             'Signal.VoltageLhEngine'
@@ -873,8 +930,8 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
             'Signal.ismYawAccel_Dps2'
             'Signal.ismFuelBurnRateLh_Lpm'
             'Signal.ismFuelBurnRateRh_Lpm'
-            'Signal.ismFuelBurntLh_Lbs'
-            'Signal.ismFuelBurntRh_Lbs'
+            'Signal.ismFuelBurntLh_Lbm'
+            'Signal.ismFuelBurntRh_Lbm'
             'Signal.ismN1Lh_Pct'
             'Signal.ismN1Rh_Pct'
             'Signal.ismRudWingletLhPosn_Deg'
@@ -906,8 +963,15 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
             'Signal.ismSplrLhInbdPosn_Deg'
             'Signal.ismSplrRhInbdPosn_Deg'
             'Signal.ismSplrRhOutbdPosn_Deg'
-            'Signal.ismCgShifterPosn_Ft'
+%             'Signal.ismCgShifterPosn_Ft'
             'Signal.ismHeightAboveGround_Ft'
+            'Signal.WSM_State'
+            'Signal.CgShifterVel_Fts'
+            'Signal.CgShifterHealthCode'
+            'Signal.CgShifterCmd_Ft'
+            'Signal.CgShifterCmd_Flag'
+            'Signal.StabLhPosnDeg'
+            'Signal.StabRhPosnDeg'
         ];
     end
 

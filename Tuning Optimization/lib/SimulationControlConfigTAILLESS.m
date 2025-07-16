@@ -23,7 +23,7 @@ dt = 0.02; %Control model loop update rate is controlled by this step. use 20ms 
 % landing modes. This can be set conditionally during simulation
 % eventually.
 inFlight = 1;
-AltCruise_m = 1083;
+AltCruise_m = Alt/3.28084;
 
 % Longitudinal Control Mode (0 == Alt Priority, 1 == Airspeed Priority)
 LonMode = 0;
@@ -152,7 +152,7 @@ PitchMax    = PitchMax/180*pi;  % radian
 PitchMin    = -PitchMax;
 
 %% Pitch Control
-ElevatorTrim = -6.0; % default: -5
+ElevatorTrim = -3.0; % default: -5
 
 PitchMaxAccel = 1.0; % rad/s^2; used in rate limiter
 
@@ -163,9 +163,9 @@ PitchDampingTrust       = 0.0;
 PitchStiffnessTrust     = 0.2; %
 
 %Vehicle Properties
-ElevatorPower   = -0.002956;% /deg
+ElevatorPower   = -0.002785;% /deg
 PitchDamping    = -0.68140; % Cm/qbar
-PitchStiffness  = -0.00225; % /deg
+PitchStiffness  = -0.001114; % /deg
 
 % Limits
 PitchRateMax_User   = 30; % deg/s, used in saturation block
@@ -178,7 +178,7 @@ PitchBandwidth      = 1.10; %Hz
 Fp_Pitch    = 0.55*2*pi*PitchBandwidth; % used for generating pitch rate command
 Fp_Pitch_2  = 0.55*2*pi*PitchBandwidth*dt; % used in the low pass filter for lift coefficient
 
-PitchRateLpfCutoff  = 3; %Hz; bad name; it is actually used for filtering the elevator ouput
+PitchRateLpfCutoff  = 5; %Hz; bad name; it is actually used for filtering the elevator ouput
 Fp_Elevator         = 0.55*2*pi*PitchRateLpfCutoff*dt;
 
 %% Lateral Control (Bank to Aileron)
@@ -225,7 +225,7 @@ Fp_Aileron      = 0.55*2*pi*RollRateLpfCutoff*dt;
 %% Yaw Rate to Rudder (Bank angle defines desired yaw rate)
 YawRateErr2Rudder       = 3;
 
-SideForceErrInt2Rudder  = 0.0; % it is used in another
+SideForceErrInt2Rudder  = 0.3; % it is used in another
 % rudder_coordination based on side force/lateral acceleration
 
 % Limits
@@ -239,11 +239,11 @@ if (FTV == 2)
 
 elseif (FTV == 3)
     % Vehicle Properties
-    RudderEffect    = -0.544310; %B/dr;
-    RudderPower     = 0.000245; % /deg 
+    RudderEffect    = -0.42544; %B/dr;
+    RudderPower     = 0.000246; % /deg 
 end
 
-SideslipEffect = -0.004890; %it is used in sideslip force method
+SideslipEffect = -0.0048898; %it is used in sideslip force method
 
 % Low pass filters
 YawRateLpfCutoff = 0; % Hz; disable the filter when set to 0 in piccolo;
