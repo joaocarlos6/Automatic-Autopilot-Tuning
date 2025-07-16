@@ -145,7 +145,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [2.5 5.7 0.0 0.6 0.65];
+    Initialparam = [2.5 5.7 0.6 0.65];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
