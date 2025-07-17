@@ -5,7 +5,7 @@ clc
 addpath(genpath("lib\"))
 
 %% OPTIONS
-optimizationName = 'Piccolo_FTV4A_F2_CG';
+optimizationName = 'Piccolo_FTV3F_TAILLESS';
 dev_mode = true;        %Setting this to true enables developer mode which disables some features making it faster to run the code
 % flag_optfilter = 0;     %1-Optimize DGYRO low pass filter, 0-No filter optimization of DGYRO
 % flag_noise = 1;         %0-to disable noise, 1-to enable noise
@@ -26,7 +26,7 @@ FlapConfig = 0;
 % Vehicle
 FTV                        = 3; % Vehicle Generation 
 vehicleType                = "F";
-testPlans.CG                = [ 56.61 ];
+testPlans.CG                = [ 58.77 ];
 testPlans.mass              = [ "7P" ];    
 testPlans.inertiaScale      = [0];         % Inertia scale
 
@@ -92,8 +92,8 @@ gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05];
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [1, 1, 0.1, 0.5];
-ub.pitch = [5, 5, 1, 1.5];
+lb.pitch = [2, 2, 0.1, 0.2];
+ub.pitch = [10, 10, 1, 1.0];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -145,7 +145,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [2.5 5.7 0.6 0.65];
+    Initialparam = [3.85 4.9 0.3 0.5];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
@@ -192,7 +192,7 @@ for i=1:1 %Repeat optimization for all axis
     hold on
     plot(StepResponse.(axis_name{i}),'LineWidth',1.5)
     plot(StepResponseIni.(axis_name{i}),'LineWidth',1.5)
-    text(0.1,0.4,{'Optm Gains:',['Kp=' num2str(opt_gains.(axis_name{i})(1))],['Ki=' num2str(opt_gains.(axis_name{i})(2))],['Kds=' num2str(opt_gains.(axis_name{i})(3))],['Kts=' num2str(opt_gains.(axis_name{i})(4))],['PB=' num2str(opt_gains.(axis_name{i})(5))]})
+    text(0.1,0.4,{'Optm Gains:',['Kp=' num2str(opt_gains.(axis_name{i})(1))],['Ki=' num2str(opt_gains.(axis_name{i})(2))],['Kts=' num2str(opt_gains.(axis_name{i})(4))],['PB=' num2str(opt_gains.(axis_name{i})(5))]})
     ylabel('Pitch Rate (deg/s)');
     title(plotname);
     legend('Setpoint', 'Optimized response','Initial response')
