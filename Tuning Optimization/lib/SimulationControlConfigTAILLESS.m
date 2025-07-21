@@ -157,10 +157,10 @@ ElevatorTrim = -3.0; % default: -5
 PitchMaxAccel = 1.0; % rad/s^2; used in rate limiter
 
 % G41
-PitchRateError2Accel    = 1.4; %
-PitchRateErrorInt2Accel = 4.5; %
+PitchRateError2Accel    = 2.8; %
+PitchRateErrorInt2Accel = 4.9; %
 PitchDampingTrust       = 0.0;
-PitchStiffnessTrust     = 0.2; %
+PitchStiffnessTrust     = 0.65; %
 
 %Vehicle Properties
 ElevatorPower   = -0.002785;% /deg
@@ -172,7 +172,7 @@ PitchRateMax_User   = 30; % deg/s, used in saturation block
 PitchRateMax_User   = PitchRateMax_User/180*pi; % rad/s, used in saturation block
 ElevatorMax         = 25; %deg
 
-PitchBandwidth      = 1.10; %Hz 
+PitchBandwidth      = 0.55; %Hz 
 %Low pass filters
 
 Fp_Pitch    = 0.55*2*pi*PitchBandwidth; % used for generating pitch rate command
