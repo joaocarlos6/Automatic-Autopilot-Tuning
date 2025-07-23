@@ -12,9 +12,9 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 % flag_NoiseLvl= 1;       %0-correct sensor noise levels for each axis, 1-highest level of sensor noise, 2-increase sensor noise x5 
 
 %OPTIMIZATION SETTINGS
-gaopt.PopulationSize = 300;                      %Size of the population.
+gaopt.PopulationSize = 350;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 15*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 19*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -64,7 +64,7 @@ stepTime = pilotTime + trimTime;
 Qq = 6.5;
 Rr = 0.5;
 Cc = 0.5;
-Dd = 50;
+Dd = 150;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -86,14 +86,14 @@ axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
 %Parameter resolution [Kp ki kst pitchbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05];
+gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05 1/0.05];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [2, 2, 0.1, 0.2];
-ub.pitch = [10, 10, 1, 1.0];
+lb.pitch = [2, 2, 0, 0, 0.1];
+ub.pitch = [6, 12, 1, 1, 2];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -145,7 +145,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [3.85 4.9 0.3 0.5];
+    Initialparam = [3 8.45 0.05 1 0.3];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
