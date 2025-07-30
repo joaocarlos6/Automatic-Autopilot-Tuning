@@ -14,7 +14,7 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 %OPTIMIZATION SETTINGS
 gaopt.PopulationSize = 300;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 15*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 16*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -26,7 +26,7 @@ FlapConfig = 0;
 % Vehicle
 FTV                        = 3; % Vehicle Generation 
 vehicleType                = "F";
-testPlans.CG                = [ 58.77 ];
+testPlans.CG                = [ 57.44 ];
 testPlans.mass              = [ "7P" ];    
 testPlans.inertiaScale      = [0];         % Inertia scale
 
@@ -59,12 +59,12 @@ WSMCart = 0;
 testIndx = 1;
 
 pilotTime = 30; % s - time of maneuver
-trimTime = 5; % s - time to let controller trim in the commanded initial position
+trimTime = 2; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
-Qq = 6.5;
+Qq = 65;
 Rr = 0.5;
-Cc = 0.5;
-Dd = 50;
+Cc = 2;
+Dd = 75;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -86,14 +86,14 @@ axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
 %Parameter resolution [Kp ki kst pitchbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05];
+gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05 1/0.05];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [2, 2, 0.1, 0.2];
-ub.pitch = [10, 10, 1, 1.0];
+lb.pitch = [2, 2, 0, 0, 0.8];
+ub.pitch = [8, 10, 1, 1, 0.9];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -145,7 +145,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [3.85 4.9 0.3 0.5];
+    Initialparam = [2.5 3.25 0.5 0.15 0.9];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else

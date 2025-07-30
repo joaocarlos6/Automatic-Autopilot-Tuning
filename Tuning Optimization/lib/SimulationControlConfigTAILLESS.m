@@ -45,7 +45,7 @@ SteeringArm         = 0.53;
 
 CL_Max      = 0.540;
 CL_Max_Nom  = 0.390;
-CL_cruise   = 0.280;
+CL_cruise   = 0.290;
 
 % documentation says above and says during TouchDown, use CL_Limit=CL_Max;
 CL_Limit    = CL_Max;   % During Short Final/Touchdown this is relaxed to CL_Max limit
