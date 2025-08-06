@@ -11,8 +11,8 @@ function [cost, StepResponse] = GA_tuning_function(k)
     assignin('base','KP_Pitch',k(1));
     assignin('base','KI_Pitch',k(2));
     assignin('base','K_TD',k(3));
-    assignin('base','K_TS',k(4));
-    assignin('base','PB',k(5));
+    % assignin('base','K_TS',k(4));
+    % assignin('base','PB',k(5));
 
     warning('off','all')
     %Run simulation
@@ -21,7 +21,7 @@ function [cost, StepResponse] = GA_tuning_function(k)
    
     %Return cost
     cost = COST.Data(end);
-    if COST.Time(end) < 40
+    if COST.Time(end) < 45
         cost = inf;
     end
        
