@@ -47,7 +47,8 @@ if FDMRelease == 44
     if modelScale == "7P"
        if FTV3F_flag == 1
             %this is FTV3F
-            FDMDLL  = 't507_7p_T507_7P_sim_Top3_45_Opt2.mexw64';
+            % FDMDLL  = 't507_7p_T507_7P_sim_Top3_45_Opt2.mexw64';
+            FDMDLL  = 't507_7p_T507_7P_sim_Top3_45_2_1_Opt2.mexw64';
         elseif FTV3F_flag == 0
             %this is FTV3E
             FDMDLL  = 't507_7p_T507_7P_sim_Top3_42_1_1_Opt2.mexw64';

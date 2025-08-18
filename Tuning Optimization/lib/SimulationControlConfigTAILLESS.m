@@ -134,12 +134,12 @@ AltMin              = 0;
 AltMaxAccel         = 1.7; %m/s/s
 
 % G36 Flight
-AltRateError2Pitch      = 0.9;
-AltRateErrorInt2Pitch   = 0.1;
-AltRateCmd2Pitch        = 0.7;
+AltRateError2Pitch      = 1.5;
+AltRateErrorInt2Pitch   = 0.7;
+AltRateCmd2Pitch        = 0.4;
 
 %Low Pass Filters
-AltRateLpfCutOff    = 3; %Hz
+AltRateLpfCutOff    = 5; %Hz
 Fp_AltRate          = 0.55*2*pi*AltRateLpfCutOff*dt;
 
 % Used in INS
@@ -163,7 +163,7 @@ PitchDampingTrust       = 0.96;
 PitchStiffnessTrust     = 0.0; %
 
 %Vehicle Properties
-ElevatorPower   = -0.0029313;% /deg
+ElevatorPower   = -0.002668;% /deg
 PitchDamping    = -0.68140; % Cm/qbar
 PitchStiffness  = -0.002086; % /deg
 
@@ -172,7 +172,7 @@ PitchRateMax_User   = 30; % deg/s, used in saturation block
 PitchRateMax_User   = PitchRateMax_User/180*pi; % rad/s, used in saturation block
 ElevatorMax         = 25; %deg
 
-PitchBandwidth      = 0.65; %Hz 
+PitchBandwidth      = 0.4; %Hz 
 %Low pass filters
 
 Fp_Pitch    = 0.55*2*pi*PitchBandwidth; % used for generating pitch rate command

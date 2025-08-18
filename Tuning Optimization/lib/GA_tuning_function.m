@@ -12,16 +12,16 @@ function [cost, StepResponse] = GA_tuning_function(k)
     assignin('base','KI_Pitch',k(2));
     assignin('base','K_TD',k(3));
     % assignin('base','K_TS',k(4));
-    % assignin('base','PB',k(5));
+    assignin('base','PB',k(4));
 
     warning('off','all')
     %Run simulation
-    output_cmd_text = evalc("sim('Maneuver.slx')");
+    output_cmd_text = evalc("sim('Landing_VV.slx')");
     warning('on','all')
    
     %Return cost
     cost = COST.Data(end);
-    if COST.Time(end) < 45
+    if SimVer.Sim_Pic3.apMode.Data(end) ~= 11
         cost = inf;
     end
        
