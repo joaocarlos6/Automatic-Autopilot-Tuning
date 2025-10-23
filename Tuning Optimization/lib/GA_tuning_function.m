@@ -10,9 +10,10 @@ function [cost, StepResponse] = GA_tuning_function(k)
     %Assign parameters to base workspace of simualtion
     assignin('base','KP_Pitch',k(1));
     assignin('base','KI_Pitch',k(2));
-    assignin('base','K_TD',k(3));
+    % assignin('base','K_TD',k(3));
     % assignin('base','K_TS',k(4));
-    % assignin('base','PB',k(5));
+    assignin('base','Damping',k(3));
+    % assignin('base','Stiffness',k(6));
 
     warning('off','all')
     %Run simulation
