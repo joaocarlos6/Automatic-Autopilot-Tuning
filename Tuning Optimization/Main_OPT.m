@@ -5,23 +5,23 @@ clc
 addpath(genpath("lib\"))
 
 %% OPTIONS
-optimizationName = 'Piccolo_FTV4A_AFT_CG';
+optimizationName = 'Piccolo_FTV3F_TAILOFF_F2';
 dev_mode = true;        %Setting this to true enables developer mode which disables some features making it faster to run the code
 % flag_optfilter = 0;     %1-Optimize DGYRO low pass filter, 0-No filter optimization of DGYRO
 % flag_noise = 1;         %0-to disable noise, 1-to enable noise
 % flag_NoiseLvl= 1;       %0-correct sensor noise levels for each axis, 1-highest level of sensor noise, 2-increase sensor noise x5 
 
 %OPTIMIZATION SETTINGS
-gaopt.PopulationSize = 300;                      %Size of the population.
+gaopt.PopulationSize = 150;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 15*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 16*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
 
 %% Simulation settings
-WithTail = 1;
-Flap = 0;
+WithTail = 0;
+FlapConfig = 2;
 
 % Vehicle
 FTV                        = 3; % Vehicle Generation 
@@ -40,7 +40,7 @@ testPlans.terrainOffset     = [0];     % Offset applied to sim terrain height (s
 
 % Conditions
 windSpeed = [0];                % Set of wind speeds (kts)
-windTurb  = [0.0];              % Turbulence to accompany each speed
+windTurb  = [0.3];              % Turbulence to accompany each speed
 windDir   = [0];                % Set of wind directions (WRT runway)
 testPlans.winds             = [windSpeed,windTurb,windDir];
 
@@ -62,10 +62,10 @@ pilotTime = 30; % s - time of maneuver
 trimTime = 5; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
 
-Q = 450;
-R = 2;
-C = 0.01;
-D = 15;
+Qq = 100;
+Rr = 2.5;
+Cc = 1;
+Dd = 7.5;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -86,12 +86,12 @@ end
 axis_name = {'roll'};
 fun = @GA_tuning_function;
 
-%Parameter resolution [Kp ki rollbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.05];
+%Parameter resolution [Kp ki rolldamping ]
+gain_resolution = [1/0.05 1/0.05 1/0.01];
 
 % %Parameters limit [Kp ki kd]
-lb.roll = [5, 5, 0.5];
-ub.roll = [10, 10, 1.5];
+lb.roll = [2, 2, 0.1];
+ub.roll = [15, 15, 0.35];
 
 % lb.pitch = [1, 1, 0.1, 0.1, 0.5];
 % ub.pitch = [3, 3, 1, 1, 1.5];
@@ -146,7 +146,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [8 6.5 1.0];
+    Initialparam = [9.7 8.75 0.25];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else

@@ -27,8 +27,9 @@ if ~exist('PackageFlag','var')
 end
 
 % Define name and location of FDM on fileserver     
+
 FDMPath     = 'R:\0080-BA-16.5PCNT BWB HWIL SIMULATION\DESIGN\5 - FDM RELEASES\'; %CfAR Fileserver FDM Store
-FDMRelease  = 44;
+FDMRelease  = 45;
 
 disp("FDM Version: " + FDMRelease)
 %% Model Configuration Parameters
@@ -42,7 +43,15 @@ if PackageFlag == 1
 end
     
 % Define Model
-if FDMRelease == 44
+
+if FDMRelease == 45
+    FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver45\T507Sim';
+    if modelScale == "7P"
+        FDMDLL      = 't507_7p_T507_7P_sim_Top3_49_Opt2.mexw64';
+    elseif modelScale == "16P5"
+        FDMDLL      = 't507_16p5_T507_16P5_sim_Top1_77_1_3_Opt2.mexw64';
+    end
+elseif FDMRelease == 44
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver44\T507Sim';
     if modelScale == "7P"
        if FTV3F_flag == 1

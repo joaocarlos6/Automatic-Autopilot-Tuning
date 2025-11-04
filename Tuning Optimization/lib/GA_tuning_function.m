@@ -10,7 +10,7 @@ function [cost, StepResponse] = GA_tuning_function(k)
     %Assign parameters to base workspace of simualtion
     assignin('base','KP_Roll',k(1));
     assignin('base','KI_Roll',k(2));
-    assignin('base','RB',k(3));
+    assignin('base','RD',k(3));
 
     warning('off','all')
     %Run simulation
