@@ -66,7 +66,7 @@ elseif WithTail==0 %TAILLESS
     disp("* 3F Tailless *");
       if strcmp(CGConfig,'TBF')
         % From TMI release April 24 2025, FTV3F TAILLESS TMI CALCULATOR_REV0.xlsx
-        xCgLocMacBWB      = 58.77;% PERCENT MAC BWB
+        xCgLocMacBWB      = 54.94;% PERCENT MAC BWB
         Weight            = 14.2520 * 2.2;% Lbs 
         ZCG               = 0.0124 / 0.02540 * (ZCGScale+1);% In inches
         IXX               = 1.3557 * 3417.17 * (1+InertiaScale);% In-lbs
