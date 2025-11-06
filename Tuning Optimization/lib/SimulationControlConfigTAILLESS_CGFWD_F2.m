@@ -189,7 +189,7 @@ TurnDerivativeLPFcutoff = TurnErrLPFcutoff;
 Fp_TurnDerr             = 0.55*2*pi*TurnDerivativeLPFcutoff;
 
 %% Bank to Roll Rate Cmd
-RollBandwidth   = 1.20; %Hz;Original Value 1.1 228b bug fixes this value to 1.3 for flight and 1.0 for landing?
+RollBandwidth   = 1.0; %Hz;Original Value 1.1 228b bug fixes this value to 1.3 for flight and 1.0 for landing?
 Fp_Roll         = RollBandwidth^2; % correction by reviewing the data !!!0.55*2*pi*RollBandwidth is not used !!!
 RollMaxAccel    = 1.0; %rad/s^2
 
@@ -212,7 +212,7 @@ AileronSurfaceMax   = 25; % Deg, actual max range of surface map (for use in mix
 
 %Vehicle Properties
 AileronPower    = 0.002266; % /deg
-RollDamping     = -0.3475; % Cl/pbar
+RollDamping     = -0.24; % Cl/pbar
 
 %Low pass filters
 RollRateLpfCutoff   = 3.0; % Hz

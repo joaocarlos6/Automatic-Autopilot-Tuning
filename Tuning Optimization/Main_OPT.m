@@ -12,9 +12,9 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 % flag_NoiseLvl= 1;       %0-correct sensor noise levels for each axis, 1-highest level of sensor noise, 2-increase sensor noise x5 
 
 %OPTIMIZATION SETTINGS
-gaopt.PopulationSize = 150;                      %Size of the population.
+gaopt.PopulationSize = 100;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 16*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 18*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -63,8 +63,8 @@ trimTime = 5; % s - time to let controller trim in the commanded initial positio
 stepTime = pilotTime + trimTime;
 
 Qq = 100;
-Rr = 2.5;
-Cc = 1;
+Rr = 40;
+Cc = 0.2;
 Dd = 7.5;
 %% File Paths
 addpath lib
@@ -87,11 +87,11 @@ axis_name = {'roll'};
 fun = @GA_tuning_function;
 
 %Parameter resolution [Kp ki rolldamping ]
-gain_resolution = [1/0.05 1/0.05 1/0.01];
+gain_resolution = [1/0.05 1/0.05];
 
 % %Parameters limit [Kp ki kd]
-lb.roll = [2, 2, 0.1];
-ub.roll = [15, 15, 0.35];
+lb.roll = [2, 2];
+ub.roll = [20, 20];
 
 % lb.pitch = [1, 1, 0.1, 0.1, 0.5];
 % ub.pitch = [3, 3, 1, 1, 1.5];
@@ -146,7 +146,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [9.7 8.75 0.25];
+    Initialparam = [9.95 7.65];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
