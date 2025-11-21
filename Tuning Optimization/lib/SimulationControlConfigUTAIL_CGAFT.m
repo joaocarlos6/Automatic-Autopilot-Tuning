@@ -16,9 +16,18 @@ disp("* 7P UTAIL *")
 disp("Gains: " + PiccoloGainVersion)
 
 %% Define Control Parameters for Simulation
+%% Define Control Parameters for Simulation
 CLAWs_On = 0; % We elect to disable internal BA CLaws for now...    
 dt = 0.02; %Control model loop update rate is controlled by this step. use 20ms for Piccolo 
 
+% Use to control Piccolo states. Set to 1 for flight modes. Set to 0 to use
+% landing modes. This can be set conditionally during simulation
+% eventually.
+inFlight = 1;
+AltCruise_m = Alt/3.28084;
+
+% Longitudinal Control Mode (0 == Alt Priority, 1 == Airspeed Priority)
+LonMode = 0;
 %% Control Allocation Configuration
 ControlAllocation = "M2"; % Mixing Matrix M8 for tailless
 
