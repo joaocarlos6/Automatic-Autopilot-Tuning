@@ -10,10 +10,9 @@ function [cost, StepResponse] = GA_tuning_function(k)
     %Assign parameters to base workspace of simualtion
     assignin('base','KP_Pitch',k(1));
     assignin('base','KI_Pitch',k(2));
-    % assignin('base','K_TD',k(3));
-    % assignin('base','K_TS',k(4));
-    assignin('base','Damping',k(3));
-    % assignin('base','Stiffness',k(6));
+    assignin('base','K_TS',k(3));
+    assignin('base','Damping',k(4));
+    % assignin('base','Stiffness',k(5));
 
     warning('off','all')
     %Run simulation
@@ -22,7 +21,7 @@ function [cost, StepResponse] = GA_tuning_function(k)
    
     %Return cost
     cost = COST.Data(end);
-    if COST.Time(end) < 45
+    if COST.Time(end) < 39
         cost = inf;
     end
        
@@ -31,4 +30,10 @@ function [cost, StepResponse] = GA_tuning_function(k)
     rmdir('slprj','s')
 
 end
+
+
+
+
+
+
 
