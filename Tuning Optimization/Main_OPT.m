@@ -14,7 +14,7 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 %OPTIMIZATION SETTINGS
 gaopt.PopulationSize = 150;                      %Size of the population.
 gaopt.MaxGenerations = 3; %100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 17*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 50*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -26,7 +26,7 @@ FlapConfig = 0;
 % Vehicle
 FTV                        = 3; % Vehicle Generation 
 vehicleType                = "F";
-testPlans.CG                = [ 57.44 ];
+testPlans.CG                = [ 56.61];
 testPlans.mass              = [ "7P" ];    
 testPlans.inertiaScale      = [0];         % Inertia scale
 
@@ -40,7 +40,7 @@ testPlans.terrainOffset     = [0];     % Offset applied to sim terrain height (s
 
 % Conditions
 windSpeed = [0];                % Set of wind speeds (kts)
-windTurb  = [0.0];              % Turbulence to accompany each speed
+windTurb  = [0.3];              % Turbulence to accompany each speed
 windDir   = [0];                % Set of wind directions (WRT runway)
 testPlans.winds             = [windSpeed,windTurb,windDir];
 
@@ -61,7 +61,7 @@ testIndx = 1;
 pilotTime = 20; % s - time of maneuver
 trimTime = 5; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
-Qq = 2;
+Qq = 200;
 Rr = 500;
 Cc = 400;
 Dd = 10000;
@@ -145,7 +145,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [0.55 0.50 0.20];
+    Initialparam = [0.3 0.15 0.9];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
