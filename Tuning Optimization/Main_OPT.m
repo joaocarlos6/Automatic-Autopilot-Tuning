@@ -5,7 +5,7 @@ clc
 addpath(genpath("lib\"))
 
 %% OPTIONS
-optimizationName = 'Piccolo_FTV3F_FLAP0_TAILON_AFTCG';
+optimizationName = 'Piccolo_FTV3F_FLAP0_TAILOFF_AFTCG';
 dev_mode = true;        %Setting this to true enables developer mode which disables some features making it faster to run the code
 % flag_optfilter = 0;     %1-Optimize DGYRO low pass filter, 0-No filter optimization of DGYRO
 % flag_noise = 1;         %0-to disable noise, 1-to enable noise
@@ -14,7 +14,7 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 %OPTIMIZATION SETTINGS
 gaopt.PopulationSize = 150;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 16*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 5*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -25,7 +25,7 @@ FlapConfig = 0;
 
 % Vehicle
 FTV                        = 3; % Vehicle Generation 
-vehicleType                = "F";
+vehicleType                = "E";
 testPlans.CG                = [ 56.61 ];
 testPlans.mass              = [ "7P" ];    
 testPlans.inertiaScale      = [0];         % Inertia scale
@@ -64,7 +64,7 @@ stepTime = pilotTime + trimTime;
 Qq = 62;
 Rr = 0.2;
 Cc = 1.5;
-Dd = 16;
+Dd = 10;
 
 %% File Paths
 addpath lib
@@ -86,15 +86,15 @@ end
 axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
-%Parameter resolution [Kp ki kst pitchbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.05];
+%Parameter resolution [Kp ki stiffness damping pitchbandwidth ]
+gain_resolution = [1/0.05 1/0.05 1/0.0005 1/0.1 1/0.05];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [2, 2, 0.2];
-ub.pitch = [12, 15, 1.2];
+lb.pitch = [2, 2, 0, 0, 0.2];
+ub.pitch = [12, 15, 0.003, 2, 1.2];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -142,11 +142,11 @@ for i=1:1 %Repeat optimization for all axis
     % Q = Q_list(i);
     % R = R_list(i);
     % C = C_list(i);
-    StopTime = 50;
+    StopTime = 45;
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [2.2 7.5 0.45];
+    Initialparam = [3.1 6.3 0 0.7 0.45];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
