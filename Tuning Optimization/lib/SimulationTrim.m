@@ -27,9 +27,8 @@ if ~exist('PackageFlag','var')
 end
 
 % Define name and location of FDM on fileserver     
-
 FDMPath     = 'R:\0080-BA-16.5PCNT BWB HWIL SIMULATION\DESIGN\5 - FDM RELEASES\'; %CfAR Fileserver FDM Store
-FDMRelease  = 45;
+FDMRelease  = 46;
 
 disp("FDM Version: " + FDMRelease)
 %% Model Configuration Parameters
@@ -43,14 +42,20 @@ if PackageFlag == 1
 end
     
 % Define Model
-
-if FDMRelease == 45
+if FDMRelease == 46
+    FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver46\T507Sim';
+    if modelScale == "7P"
+        FDMDLL      = 't507_7p_T507_7P_sim_Top3_51_Opt2.mexw64';
+    elseif modelScale == "16P5"
+        FDMDLL      = 't507_16p5_T507_16P5_simTop1_77_1_3_Opt2.mexw64';
+    end  
+elseif FDMRelease == 45
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver45\T507Sim';
     if modelScale == "7P"
         FDMDLL      = 't507_7p_T507_7P_sim_Top3_49_Opt2.mexw64';
     elseif modelScale == "16P5"
-        FDMDLL      = 't507_16p5_T507_16P5_sim_Top1_77_1_3_Opt2.mexw64';
-    end
+        FDMDLL      = 't507_16p5_T507_16P5_simTop1_77_1_3_Opt2.mexw64';
+    end  
 elseif FDMRelease == 44
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver44\T507Sim';
     if modelScale == "7P"
@@ -190,8 +195,12 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
         SimObj.NUM_ITER_TO_PROPAGATE_ORDINARY_NTSTATES = 4;
         
         % FTV selection
-        if (isequal(SimObj.Param.ac_type,507.07)) && (FDMRelease >= 36)
-            SimObj.fadd('Defaults','Settings','Param.Vehicle_Type', FTV3F_flag); % 0 = FTV3E (default), 1 = FTV3F
+        if (isequal(SimObj.Param.ac_type,507.07) && FDMRelease >= 36)
+            SimObj.fadd('Defaults','Settings','Param.Vehicle_Type',1); % 1 = retrofitted FTV3E & FTV3F; 0 = old FTV3E
+            if FDMRelease == 46
+                SimObj.fadd('Defaults','Settings','Param.Aero_FTV3F',FTV3F_flag); % 1 = FTV3F aero data; 0 = FTV3E aero data
+                SimObj.fadd('Defaults','Settings','Param.FTV_asymmetry_mode',FTV3F_flag); % 1 = assymetry present in FTV3F; 0 = no assymetry (FTV3E)
+            end
         end
         
         % Main Gear position (16.5%)

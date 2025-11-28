@@ -77,7 +77,7 @@ else
         end
     else
         if Flap == 0
-            SimulationControlConfigTAILLESS;
+            SimulationControlConfigTAILLESS_CGFWD_F0;
             disp("7P TAILLESS f0 Control Complete");
         elseif Flap == 2
             SimulationControlConfigTAILLESS_CGFWD_F2;
