@@ -76,15 +76,22 @@ else
             disp("7P UTAIL f0 Control Complete");
         end
     else
-        SimulationControlConfigTAILLESS;
-        disp("7P TAILLESS Control Complete");
+        if Flap == 0
+%             SimulationControlConfigTAILLESS_CGFWD_F0;
+            SimulationControlConfigTAILLESS_CGAFT_F0;
+            disp("7P TAILLESS f0 Control Complete");
+        elseif Flap == 2
+            SimulationControlConfigTAILLESS_CGFWD_F2;
+            disp("7P UTAIL f2 Control Complete");
+        end
     end
 end
 
-SimulationControlPre
-disp("ControlPre Complete");
 SimulationTrim
 disp("Trim Complete");
+
+SimulationControlPre
+disp("ControlPre Complete");
 
 if (FTV == 4)
     SimulationHStabConfig
