@@ -12,9 +12,9 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 % flag_NoiseLvl= 1;       %0-correct sensor noise levels for each axis, 1-highest level of sensor noise, 2-increase sensor noise x5 
 
 %OPTIMIZATION SETTINGS
-gaopt.PopulationSize = 150;                      %Size of the population.
+gaopt.PopulationSize = 100;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 5*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 2*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
@@ -26,7 +26,7 @@ FlapConfig = 0;
 % Vehicle
 FTV                        = 3; % Vehicle Generation 
 vehicleType                = "E";
-testPlans.CG                = [ 56.61 ];
+testPlans.CG                = [ 55.76 ];
 testPlans.mass              = [ "7P" ];    
 testPlans.inertiaScale      = [0];         % Inertia scale
 
@@ -58,13 +58,12 @@ WSMCart = 0;
 
 testIndx = 1;
 
-pilotTime = 35; % s - time of maneuver
-trimTime = 5; % s - time to let controller trim in the commanded initial position
+pilotTime = 28; % s - time of maneuver
+trimTime = 2; % s - time to let controller trim in the commanded initial position
 stepTime = pilotTime + trimTime;
-Qq = 62;
-Rr = 0.2;
-Cc = 1.5;
-Dd = 10;
+Qq = 620;
+Rr = 5;
+Cc = 10;
 
 %% File Paths
 addpath lib
@@ -86,15 +85,15 @@ end
 axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
-%Parameter resolution [Kp ki stiffness damping pitchbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.0005 1/0.1 1/0.05];
+%Parameter resolution [Kp ki kff ]
+gain_resolution = [1/0.05 1/0.05 1/0.05];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [2, 2, 0, 0, 0.2];
-ub.pitch = [12, 15, 0.003, 2, 1.2];
+lb.pitch = [0.1, 0.1, 0.1];
+ub.pitch = [3, 3, 1];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -142,11 +141,11 @@ for i=1:1 %Repeat optimization for all axis
     % Q = Q_list(i);
     % R = R_list(i);
     % C = C_list(i);
-    StopTime = 45;
+    StopTime = 36;
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [3.1 6.3 0 0.7 0.45];
+    Initialparam = [0.9 0.9 0.6];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
