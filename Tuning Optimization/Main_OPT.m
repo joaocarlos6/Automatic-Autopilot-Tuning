@@ -26,7 +26,7 @@ FlapConfig = 0;
 % Vehicle
 FTV                        = 3; % Vehicle Generation 
 vehicleType                = "E";
-testPlans.CG                = [ 56.61 ];
+testPlans.CG                = [ 55.77 ];
 testPlans.mass              = [ "7P" ];    
 testPlans.inertiaScale      = [0];         % Inertia scale
 
@@ -63,7 +63,7 @@ trimTime = 5; % s - time to let controller trim in the commanded initial positio
 stepTime = pilotTime + trimTime;
 Qq = 62;
 Rr = 0.2;
-Cc = 1.5;
+Cc = 3;
 Dd = 10;
 
 %% File Paths

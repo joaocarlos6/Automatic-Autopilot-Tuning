@@ -76,7 +76,7 @@ else
             disp("7P UTAIL f0 Control Complete");
         end
     else
-        SimulationControlConfigTAILLESS;
+        SimulationControlConfigTAILLESS_CGFWD_F0;
         disp("7P TAILLESS Control Complete");
     end
 end
