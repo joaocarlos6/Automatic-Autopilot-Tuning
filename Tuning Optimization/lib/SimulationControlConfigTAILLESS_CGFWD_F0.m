@@ -128,7 +128,7 @@ ClimbMaxFraction    = 0.21;
 DescentMaxFraction  = 0.17;
 AltMax              = 10000;
 AltMin              = 0;
-AltMaxAccel         = 2.0; %m/s/s
+AltMaxAccel         = 100; %m/s/s
 
 %G41 Tuning
 AltRateError2Pitch      = 0.4; %0.3; 
@@ -152,17 +152,17 @@ PitchMin    = -PitchMax;
 ElevatorTrim = -5; % default: -5
 
 PitchMaxAccel   = 1.0; % rad/s^2; used in rate limiter
-PitchBandwidth  = 0.65; %Hz 1.10
+PitchBandwidth  = 0.6; %Hz 1.10
 
 % Tuning
-PitchRateError2Accel    = 1.2; 
-PitchRateErrorInt2Accel = 8.4; 
+PitchRateError2Accel    = 2.6; 
+PitchRateErrorInt2Accel = 7.9; 
 PitchDampingTrust       = 0;
-PitchStiffnessTrust     = 1; %
+PitchStiffnessTrust     = 0; %
 
 %Vehicle Properties
 ElevatorPower   = -0.00293;% /deg
-PitchDamping    = -0.5; % Cm/qbar
+PitchDamping    = 0; % Cm/qbar
 PitchStiffness  = -0.001; % /deg
 
 % Limits
