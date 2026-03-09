@@ -9,7 +9,7 @@ if ~exist('NoiseStd','var')
     SimulationSensorConfig;
 end
 
-PiccoloGainVersion = "G41.5 Nominal (Gen " + FTV +")";
+PiccoloGainVersion = "G44 FWD Flap 2 (Gen " + FTV +")";
 modelScale = '7P';
 
 disp("* 7P TAILLESS *")
@@ -23,7 +23,7 @@ dt = 0.02; %Control model loop update rate is controlled by this step. use 20ms 
 % landing modes. This can be set conditionally during simulation
 % eventually.
 inFlight = 1;
-AltCruise_m = Alt/1.9444;
+AltCruise_m = 640;
 
 % Longitudinal Control Mode (0 == Alt Priority, 1 == Airspeed Priority)
 LonMode = 0;
@@ -43,9 +43,9 @@ c           = Sw/b; % m;average wing chord
 VerticalTailArm     = 0.47; %m
 SteeringArm         = 0.53;
 
-CL_Max      = 0.540;
-CL_Max_Nom  = 0.390;
-CL_cruise   = 0.280;
+CL_Max      = 0.525;
+CL_Max_Nom  = 0.451;
+CL_cruise   = 0.327;
 
 % documentation says above and says during TouchDown, use CL_Limit=CL_Max;
 CL_Limit    = CL_Max;   % During Short Final/Touchdown this is relaxed to CL_Max limit
@@ -84,19 +84,17 @@ TASRateErrInt2VRate = 1.50;
 TASRateMax=4.0; % m/s^2; also used in throttle control to saturate desired energy rate
 
 %% Throttle Control
-ThrottleTrim    = 0.5;  % 0.2
+ThrottleTrim    = 0.3;  % 0.2
 MaxEnginePower  = 4900; % W 5500
 
-% G41 Modification
-PowerError2Throttle     = 0.5; % 0.9
-PowerErrorInt2Throttle  = 1.1; % 0.2
+PowerError2Throttle     = 0.9; % 0.9
+PowerErrorInt2Throttle  = 0.9; % 0.2
 ThrottlePredictionTrust = 0.6; % 0.9
-% Reduced TLA Rate
 ThrottleRateMax         = 0.2; % 1/s; not in documentation, but in PCC
 
 % EXTERNAL LOGIC
 % To apply slower slew during throttle cut in flare.
-useFlareSlew        = 1;        % Flag to enable external throttle logic
+useFlareSlew        = 0;        % Flag to enable external throttle logic
 useElevatorKill     = 1;        % Flag to kill engine based on Elevator. Alternative is rollout state machine
 RolloutElevTrigger  = 2;        % Deg, Position Elevator triggers Rollout Throttle, 
 ThrottleRateFlare   = 0.045;    % /s, Slew rate to be applied 0.025, 0.05
@@ -120,31 +118,30 @@ Fp_Energy2          = 0.55*2*pi*EnergyBandwidth*dt;
 ThrottleMax = 0.95;
 ThrottleMin = 0.00;
 
-%%  Vertical Rate Control 
+%%  Vertical Rate Control (Landing Lon Gains)
 % BW
-AltBandwidth    = 0.17; %Hz 
+AltBandwidth    = 0.06; %Hz, 
 Fp_Alt          = 2*pi*0.55*AltBandwidth;
 
 % Limits
-ClimbMaxFraction    = 0.19;
+ClimbMaxFraction    = 0.21;
 DescentMaxFraction  = 0.17;
-
 AltMax              = 10000;
 AltMin              = 0;
-AltMaxAccel         = 1.7; %m/s/s
+AltMaxAccel         = 2.0; %m/s/s
 
-% G36 Flight
-AltRateError2Pitch      = 0.55;
-AltRateErrorInt2Pitch   = 0.50;
-AltRateCmd2Pitch        = 0.20;
+% AltRate control gains
+AltRateError2Pitch      = 0.2; 
+AltRateErrorInt2Pitch   = 0.85; 
+AltRateCmd2Pitch        = 0.25;
 
 %Low Pass Filters
-AltRateLpfCutOff    = 2; %Hz
+AltRateLpfCutOff    = 5; %Hz
 Fp_AltRate          = 0.55*2*pi*AltRateLpfCutOff*dt;
 
 % Used in INS
 TasLpfCutoff    = 1.0; %Hz
-Fp_TAS_Filter   = 2*pi*TasLpfCutoff*dt; % Fp_Tas          = 0.55*2*pi*TasLpfCutoff*dt;
+Fp_TAS_Filter   = 2*pi*TasLpfCutoff*dt;
 
 %Limits
 PitchMax    = 25;               % deg
@@ -152,38 +149,37 @@ PitchMax    = PitchMax/180*pi;  % radian
 PitchMin    = -PitchMax;
 
 %% Pitch Control
-ElevatorTrim = -6.0; % default: -5
+ElevatorTrim = -7.7; % default: -5
 
-PitchMaxAccel = 1.0; % rad/s^2; used in rate limiter
+PitchMaxAccel   = 1.5; % rad/s^2; used in rate limiter
+PitchBandwidth  = 0.5; %Hz 1.10
 
-% G41
-PitchRateError2Accel    = 1.4; %
-PitchRateErrorInt2Accel = 4.5; %
-PitchDampingTrust       = 0.0;
-PitchStiffnessTrust     = 0.2; %
+% Tuning
+PitchRateError2Accel    = 2.15; 
+PitchRateErrorInt2Accel = 8.7; 
+PitchDampingTrust       = 0;
+PitchStiffnessTrust     = 1; %
 
 %Vehicle Properties
-ElevatorPower   = -0.002956;% /deg
-PitchDamping    = -0.68140; % Cm/qbar
-PitchStiffness  = -0.00225; % /deg
+ElevatorPower   = -0.00293;% /deg
+PitchDamping    = 0; %-0.8; % Cm/qbar
+PitchStiffness  = -0.001; % /deg
 
 % Limits
 PitchRateMax_User   = 30; % deg/s, used in saturation block
 PitchRateMax_User   = PitchRateMax_User/180*pi; % rad/s, used in saturation block
 ElevatorMax         = 25; %deg
 
-PitchBandwidth      = 1.10; %Hz 
 %Low pass filters
-
 Fp_Pitch    = 0.55*2*pi*PitchBandwidth; % used for generating pitch rate command
 Fp_Pitch_2  = 0.55*2*pi*PitchBandwidth*dt; % used in the low pass filter for lift coefficient
 
-PitchRateLpfCutoff  = 3; %Hz; bad name; it is actually used for filtering the elevator ouput
+PitchRateLpfCutoff  = 5; %Hz; used for filtering the elevator ouput
 Fp_Elevator         = 0.55*2*pi*PitchRateLpfCutoff*dt;
 
 %% Lateral Control (Bank to Aileron)
 % Track Control
-TrackConvergence        = 0.285;%????
+TrackConvergence        = 0.23;%????
 HeadingErr2TurnRate     = 0.5;  %????
 HeadingErrDer2TurnRate  = 0.3;  %????
 TurnErrLPFcutoff        = 0.05; %????
@@ -193,44 +189,44 @@ TurnDerivativeLPFcutoff = TurnErrLPFcutoff;
 Fp_TurnDerr             = 0.55*2*pi*TurnDerivativeLPFcutoff;
 
 %% Bank to Roll Rate Cmd
-% RollBandwidth   = 1.30; %Hz;1.2
-RollBandwidth   = 1.0; %Hz; Fixed at 1.0 as per Piccolo
+RollBandwidth   = 1.3; %Hz;Original Value 1.1 228b bug fixes this value to 1.3 for flight and 1.0 for landing
 Fp_Roll         = RollBandwidth^2; % correction by reviewing the data !!!0.55*2*pi*RollBandwidth is not used !!!
+RollMaxAccel    = 1.5; %rad/s^2
 
 % Limits
-BankMax_User    = 35;                   % deg/s
+BankMax_User    = 32;                   % deg/s
 BankMax_User    = BankMax_User/180*pi;
 RollRateMax     = 35;                   % deg/s
 RollRateMax     = RollRateMax/180*pi;   % rad/s
 
 %% Roll Rate to Aileron
 AileronTrim=0;
-
-% G36
-RollRateError2Accel     = 6.5; %
-RollRateErrorInt2Accel  = 5; %
-RollDampingTrust        = 0.0;
-
-RollMaxAccel            = 1.0; %rad/s^2
+% 
+RollRateError2Accel     = 9.95; %
+RollRateErrorInt2Accel  = 7.65; %
+RollDampingTrust        = 0;
 
 % Limits
-AileronMax=25; % Deg
+AileronMax          = 25; % Deg (Piccolo command saturation)
+AileronSurfaceMax   = 25; % Deg, actual max range of surface map (for use in mixing logic)
+
 %Vehicle Properties
-AileronPower    = 0.00268; % /deg
-RollDamping     = -0.3475; % Cl/pbar
+AileronPower    = 0.002266; % /deg
+RollDamping     = -0.24; % Cl/pbar
+
 %Low pass filters
-RollRateLpfCutoff       = 3.0; % Hz 
-Fp_Aileron      = 0.55*2*pi*RollRateLpfCutoff*dt;
+RollRateLpfCutoff   = 3.0; % Hz
+Fp_Aileron          = 0.55*2*pi*RollRateLpfCutoff*dt;
 
 %% Yaw Rate to Rudder (Bank angle defines desired yaw rate)
-YawRateErr2Rudder       = 3;
-
-SideForceErrInt2Rudder  = 0.0; % it is used in another
+%
+YawRateErr2Rudder       = 6;
+SideForceErrInt2Rudder  = 0.1; % it is used in another
 % rudder_coordination based on side force/lateral acceleration
 
 % Limits
-RudderMax  = 25; %deg
-RudderTrim = 0;
+RudderMax   = 25; %deg
+RudderTrim  = -1;
 
 if (FTV == 2)
     % Vehicle Properties
@@ -239,8 +235,8 @@ if (FTV == 2)
 
 elseif (FTV == 3)
     % Vehicle Properties
-    RudderEffect    = -0.544310; %B/dr;
-    RudderPower     = 0.000245; % /deg 
+    RudderEffect    = -0.42937; %B/dr;
+    RudderPower     = 0.000244; % /deg 
 end
 
 SideslipEffect = -0.004890; %it is used in sideslip force method
@@ -265,19 +261,8 @@ TrackY2Vy               = 0.4;
 % Inner Loop
 TrackVyErrInt2Nosegear  = 0.15;
 TrackVyErrPro2Nosegear  = 1.2;
-YawRate2Nosegear        = 0.070; %0.06
-Vy2NosegearScalingPower = 1.55; %1.65
-
-% Transition Retuning for 2C Tailless
-% % Outer Loop
-% Y2VyScalingPower        = 0.3;
-% TrackY2Vy               = 0.4;
-% 
-% % Inner Loop
-% TrackVyErrInt2Nosegear  = 0.25;
-% TrackVyErrPro2Nosegear  = 1.4;
-% YawRate2Nosegear        = 0.08; %0.06
-% Vy2NosegearScalingPower = 1.625; %1.65
+YawRate2Nosegear        = 0.060;
+Vy2NosegearScalingPower = 1.65; 
 
 % Rollout Retuned - From UTail - Used for 3D
 % Outer Loop
@@ -289,17 +274,6 @@ ldg_TrackVyErrInt2Nosegear  = 0.01/1.4;
 ldg_TrackVyErrPro2Nosegear  = 0.82/15;
 ldg_YawRate2Nosegear        = 0.065;
 ldg_Vy2NosegearScalingPower = 0.60;
-
-% Rollout Retuned - Used for 2C
-% Outer Loop
-% ldg_Y2VyScalingPower        = 0.0;
-% ldg_TrackY2Vy               = 0.17;
-% 
-% % Inner Loop
-% ldg_TrackVyErrInt2Nosegear  = 0.2;
-% ldg_TrackVyErrPro2Nosegear  = 1.0;
-% ldg_YawRate2Nosegear        = 0.065;
-% ldg_Vy2NosegearScalingPower = 1.6;
 
 % Limits 
 NosegearMax     = 15; % deg
@@ -320,8 +294,8 @@ taxiTrackOffset = testPlans(testIndx).rolloutTrackOffset; %m, to command offset 
 % Where CL_Limit = 0.9 * CL_Max_Nom, for modes 0 - 8;
 % Document indicates CL_Limit = CL_Max, for modes >= 9, 
 
-IASmin          = sqrt(2*m*9.81/(1.225*Sw*0.9*CL_Max_Nom));
-IASmax          = 38.58; % Set as static limit
+IASmin          = sqrt(2*m*9.81*1.1/(1.225*Sw*CL_Max_Nom));
+IASmax          = 38.5; % Set as static limit (ldg limits)
 IASstall        = sqrt(2*m*9.81/(1.225*Sw*CL_Max));
 IAScruiseCMD    = sqrt(2*m*9.81/(1.225*Sw*CL_cruise));
 
@@ -330,14 +304,9 @@ ClimboutMaxBank = 5.0; %Deg, allowable bank command
 ClimboutTimer   = 7.0; %s, time from start of climbout until advancing to Flight state machine
 
 %% Landing / Flare Control
-% G39.2
 IASfinalCMD = 1.10 * IASmin;
 IASshortCMD = 1.10 * IASmin;
-IASflareCMD = 0    * IASmin; % Disable throttle control in flare for consistency
-
-% IASflareCMD = 0.92 * IASmin;
-% Increase Flare IAS
-% IASflareCMD = 0.98 * IASmin;
+IASflareCMD = 1.07 * IASmin; % Disable throttle control in flare for consistency
 
 %Speed Fraction Protection Limits
 if IASshortCMD < IASstall
@@ -348,48 +317,48 @@ if IASflareCMD < IASstall && IASflareCMD~=0 %If we command 0 engines go to idle
     IASflareCMD = IASstall;
 end
 
-% Slope for final + short final
+% Slope for final
 FinalDescentSlope_Deg = testPlans(testIndx).descentSlope; %Deg
-ShortDescentSlope_Deg = testPlans(testIndx).descentSlope - 0.5; %Deg, we subtrack 0.5 degree in short approach to match previous flights
-% ShortDescentSlope_Deg = testPlans(testIndx).descentSlope; %Deg, Constant Slope
 
-ShortFinalHeight = (12 * IASshortCMD * sin(ShortDescentSlope_Deg*pi/180)) + (TerrainHeight*0.3048); %m, 26.66m @ 3deg glide slope approx 13.5s from touchdown
+% Slope for short-final
+% ShortDescentSlope_Deg = testPlans(testIndx).descentSlope; %Deg, Constant Slope
+% ShortDescentSlope_Deg = testPlans(testIndx).descentSlope - 0.5; %Deg, we subtrack 0.5 degree in short approach to match previous flights
+ShortDescentSlope_Deg = testPlans(testIndx).descentSlope-0.25; % Deg, 0.25 degree reduction (consistent with 16P)
+
+ShortFinalHeight = (10 * IASshortCMD * sin(ShortDescentSlope_Deg*pi/180)) + (TerrainHeight*0.3048); %m, 26.66m @ 3deg glide slope approx 13.5s from touchdown
 
 LdgEngineKillTime = -1; % s, Estimated time to touchdown, negative number inhibits function
 LdgEngineKillTimeFromFlare = 1.7; %have not worked out logic for this yet, this is average from FTV2C landings
 
-FlareHeight             = 2.5; %m
-FlareVerticalRate_mps   = -0.15; %G62 configured with -0.1
-% FlareVerticalRate_mps = -0.25;  % Testing w increased sink rate
+FlareHeight             = 2.75; %m 
+FlareVerticalRate_mps   = -0.2;
 
 WOWarmed = 1; %-1 indicates disarmed, 0-100 indicates armed
 
-EarlyTouchdownThreshold = 2.2;
-TouchdownThreshold      = 1.42;
+EarlyTouchdownThreshold = 3;
+TouchdownThreshold      = 3;
 
-% G39.2
-RollingElevator = 6.5; %deg
-ElevatorDeflectionRate = 10; %deg/s
+RollingElevator         = 5; %deg
+ElevatorDeflectionRate  = 10; %deg/s
 
-MaxTouchdownBank = 5; 
+MaxTouchdownBank    = 5; 
 RolloutWingLeveling = 1; 
 
 %% Flaps
 % Flap commands per mode (deg)
-flapMax     = 0; % Set to 0 to disable flaps
-flapRate    = 6.60; % Flap deployment rate (deg/s)
+flapMax     = 15; % Set to 0 to disable flaps
+flapRate    = 1.00; % Flap deployment rate (deg/s)
 
-dCl_per_dFlap = 0; % No CL change when using split ailerons 
-% dCl_per_dFlap = 0.005581818; %[/deg]
+dCl_per_dFlap =  0.010775; %[/deg]
 
 dCd_per_dFlap = 0; %[/deg] Change in Cd per flap deflection. Appears unused in controller.. 
 
-goAroundFlaps   = 0;
-downwindFlaps   = 0;
+goAroundFlaps   = 15;
+downwindFlaps   = 15;
 baseLegFlaps    = 15;
-finalApproachFlaps  = 22;
-shortFinalFlaps     = 22; 
-rolloutFlaps        = 33;
+finalApproachFlaps  = 15;
+shortFinalFlaps     = 15; 
+rolloutFlaps        = 15;
 
 elevonBias = 0;
 
@@ -399,13 +368,13 @@ elevonBias = 0;
 % (Will still be logged if disabled)
 EnableCrossTrackAbort = 1;
 % Abort Threshold
-MaxCrossError = 5.0; % m, from 2.0
+MaxCrossError = 4.6; % m
 
 % Elevator in Transition Phase
-LaunchRollingElevator   = 1.00; % deg
-RotationElevator        = -4.25;% deg
-RotationTime            = 3.5;   % s 3.6
-RotationSpeedFraction   = 1.02;
+LaunchRollingElevator   = -1; % deg
+RotationElevator        = -9; % deg
+RotationTime            = 2;  % s
+RotationSpeedFraction   = 0.96;
 
 PrelaunchBrakes = 0.10;
 

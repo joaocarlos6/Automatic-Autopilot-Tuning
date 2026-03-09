@@ -5,7 +5,6 @@
 % Description: Used to set WSM System parameters 
 
 %% Cart Mapping
-% WSMCart = testPlans(testIndx).wsm_cartpos;
 
 MaxFwdCartLocX_m = 0.6822;
 MaxAftCartLocX_m = 2.5327;

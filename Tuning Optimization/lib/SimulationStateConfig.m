@@ -21,13 +21,13 @@ end
     RwyHdg_Corrected     = 0; % AC Track is 0 deg (N) for simplification
     
     if FTV==3 || FTV==2
-        Speed   = 24*1.944; % Kts
-        Alt     = 200 + TerrainHeight;% Ft 
+        Speed   = 30*1.944; % Kts
+        Alt     = 640 + TerrainHeight;% Ft 
         PreApproachSegment = 280; %m This is pre-approach track in level flight
         
     elseif FTV==4
-        Speed   = 40*1.944; % Kts
-        Alt     = 500 + TerrainHeight;% Ft
+        Speed   = 46*1.944; % Kts
+        Alt     = 1000 + TerrainHeight;% Ft
         PreApproachSegment = 500; %m This is pre-approach track in level flight
         
     else

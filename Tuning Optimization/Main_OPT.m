@@ -5,7 +5,7 @@ clc
 addpath(genpath("lib\"))
 
 %% OPTIONS
-optimizationName = 'Piccolo_FTV4A_F2_CG';
+optimizationName = 'Piccolo_FTV4A_AFT_CG';
 dev_mode = true;        %Setting this to true enables developer mode which disables some features making it faster to run the code
 % flag_optfilter = 0;     %1-Optimize DGYRO low pass filter, 0-No filter optimization of DGYRO
 % flag_noise = 1;         %0-to disable noise, 1-to enable noise
@@ -21,13 +21,13 @@ gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the aver
 
 %% Simulation settings
 WithTail = 1;
-FlapConfig = 2;
+FlapConfig = 0;
 
 % Vehicle
 FTV                        = 4; % Vehicle Generation 
 vehicleType                = "A";
-testPlans.CG                = [ "TBF5" ];
-testPlans.mass              = [ "LDG" ];    
+testPlans.CG                = [ "TBF6" ];
+testPlans.mass              = [ "MID" ];    
 testPlans.inertiaScale      = [0];         % Inertia scale
 
 testPlans.descentSlope      = [3]; % Target descent slope (deg)
@@ -54,7 +54,7 @@ testPlans.gustTrigger       = ["Below_AGL"];    % Gust Trigger Type % Variants: 
 % Latency
 testPlans.delay             = [0.01]; % Set of latencies (ms)
 
-WSMCart = 0;
+WSMCart = 70;
 
 testIndx = 1;
 
@@ -63,9 +63,9 @@ trimTime = 5; % s - time to let controller trim in the commanded initial positio
 stepTime = pilotTime + trimTime;
 
 Qq = 2;
-Rr = 0.6;
-Cc = 0.005;
-Dd = 9;
+Rr = 0.8;
+Cc = 0.01;
+Dd = 10;
 %% File Paths
 addpath lib
 plotsFolderPath = fullfile(pwd, 'Plots',optimizationName);
@@ -86,15 +86,15 @@ end
 axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
-%Parameter resolution [Kp ki kdt kst pitchbandwidth ]
-gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.05 1/0.05];
+%Parameter resolution [Kp ki stiffness damping pitchbandwidth ]
+gain_resolution = [1/0.05 1/0.05 1/0.0005 1/0.1 1/0.05];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
-lb.pitch = [1, 1, 0.1, 0.1, 0.5];
-ub.pitch = [3, 3, 1, 1, 1.5];
+lb.pitch = [2, 2, 0, 0, 0.2];
+ub.pitch = [12, 15, 0.005, 2, 1.2];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -146,7 +146,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [1.98 1.38 0.15 0.38 0.71];
+    Initialparam = [1.98 1.38 0.0015 1.3 0.71];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else
