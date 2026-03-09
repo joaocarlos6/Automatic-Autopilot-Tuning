@@ -35,7 +35,7 @@ testPlans.speedOffset       = [0]; % Offset to approach speed target (m/s)
 testPlans.rolloutTrackOffset= [0]; % At Touchdown offset track rollout control tracks (m)
 
 % Terrain
-testPlans.terrainElevation  = [1496];   % Terrain elevation settings (ft); Dolbeau = 373, Foremost = 2904, Pendleton = 1496
+testPlans.terrainElevation  = [373];   % Terrain elevation settings (ft); Dolbeau = 373, Foremost = 2904, Pendleton = 1496
 testPlans.terrainOffset     = [0];     % Offset applied to sim terrain height (simulate elevation knowledge errors)
 
 % Conditions
