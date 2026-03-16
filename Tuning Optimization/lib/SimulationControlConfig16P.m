@@ -51,17 +51,17 @@ nMin_User   = -1.3;     % in g; from the point of view of structure
 m = MassBWB; % Use true model mass (representative of mass estimation in controller)
 
 % Lateral Axis
-XInertia = 101.734;  % kgm^2 % Updated TBF4-TOW1
+XInertia = 102.630;  % kgm^2 % Updated TBF4-TOW1
 
 % XInertia=IXX/3417.17; % Direct from model configuration
 
 % Pitch Axis
-YInertia = 134.120;  % kgm^2 % Updated TBF4-TOW1
+YInertia = 129.375;  % kgm^2 % Updated TBF4-TOW1
 
 % YInertia=IYY/3417.17;   % Direct from model configuration
 
 % Directional Axis
-ZInertia = 220.986;  % kgm^2 % Updated TBF4-TOW1
+ZInertia = 216.411;  % kgm^2 % Updated TBF4-TOW1
 
 % ZInertia=IZZ/3417.17;  % Direct from model configuration
 
@@ -129,10 +129,10 @@ AltMax             = 10000;
 AltMin             = 0;
 
 % Vertical Rate to Pitch Gains
-AltRateError2Pitch      = 0.40; 
-AltRateErrorInt2Pitch   = 0.50;  
-AltRateCmd2Pitch        = 0.50;
-AltMaxAccel             = 1.25; %m/s/s
+AltRateError2Pitch      = 0.34; 
+AltRateErrorInt2Pitch   = 0.61;  
+AltRateCmd2Pitch        = 0.26;
+AltMaxAccel             = 2.5; %m/s/s
 
 % Filters
 % Airspeed Filter
@@ -151,16 +151,16 @@ PitchMin    = -PitchMax;
 %% Pitch Control
 ElevatorTrim =-3.5; % default: -5
 
-%G72
-PitchRateError2Accel    = 1.2; % 
-PitchRateErrorInt2Accel = 1.75; % 
-PitchDampingTrust       = 0.3;
-PitchStiffnessTrust     = 0.3;
+%G74
+PitchRateError2Accel    = 1.98; % 
+PitchRateErrorInt2Accel = 1.38; % 
+PitchDampingTrust       = 0.15;
+PitchStiffnessTrust     = 0.4;
 
-PitchMaxAccel   = 1.0; % rad/s^2; used in rate limiter
+PitchMaxAccel   = 2.0; % rad/s^2; used in rate limiter
 
 %Vehicle Properties
-ElevatorPower   = -0.002060; % /deg
+ElevatorPower   = -(0.00301+elvPwr_add); % /deg
 PitchDamping    = -1.2608; % Cm/qbar
 PitchStiffness  = -0.0041; % /deg
 
@@ -170,7 +170,7 @@ PitchRateMax_User   = PitchRateMax_User/180*pi; % rad/s, used in saturation bloc
 ElevatorMax         = 25; %deg
 
 %Low pass filters
-PitchBandwidth  = 0.8; %Hz
+PitchBandwidth  = 0.5; %Hz
 Fp_Pitch        = 0.55*2*pi*PitchBandwidth; % used for generating pitch rate command
 Fp_Pitch_2      = 0.55*2*pi*PitchBandwidth*dt; % used in the low pass filter for lift coefficient
 
@@ -179,10 +179,10 @@ Fp_Elevator         = 0.55*2*pi*PitchRateLpfCutoff*dt;
 
 %% Lateral Control (Bank to Aileron)
 % Track Control
-TrackConvergence        = 0.21; %????
+TrackConvergence        = 0.20; %????
 HeadingErr2TurnRate     = 0.5; %????
 HeadingErrDer2TurnRate  = 0.3; %????
-TurnErrLPFcutoff        = 0.01; %????
+TurnErrLPFcutoff        = 0.05; %????
 Fp_Turn                 = 0.55*2*pi*TurnErrLPFcutoff;
 
 TurnDerivativeLPFcutoff = TurnErrLPFcutoff;
@@ -190,16 +190,15 @@ Fp_TurnDerr             = 0.55*2*pi*TurnDerivativeLPFcutoff;
 
 %% Bank to Roll Rate Cmd
 % Bandwidth
-% RollBandwidth   = 0.60; %Hz;
-RollBandwidth   = 1.0; %Hz; Fixed at 1.0 as per Piccolo
+RollBandwidth   = 1.3; %Hz; Fixed at 1.0 as per Piccolo
 Fp_Roll         = RollBandwidth^2; % correction by reviewing the data !!!0.55*2*pi*RollBandwidth is not used !!!
 
 % Limits
 RollMaxAccel    = 0.60; %rad/s^2
 
-BankMax_User    = 30; % deg/s
+BankMax_User    = 35; % deg/s
 BankMax_User    = BankMax_User/180*pi;
-RollRateMax     = 30; % deg/s
+RollRateMax     = 35; % deg/s
 RollRateMax     = RollRateMax/180*pi; % rad/s
 
 %% Roll Rate to Aileron

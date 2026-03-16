@@ -184,7 +184,7 @@ TurnDerivativeLPFcutoff = TurnErrLPFcutoff;
 Fp_TurnDerr = 0.55*2*pi*TurnDerivativeLPFcutoff;
 
 %% Bank to Roll Rate Cmd
-RollBandwidth   = 1.0; %Hz; Fixed at 1.0 as per Piccolo
+RollBandwidth   = 1.3; %Hz;Original Value 1.1 228b bug fixes this value to 1.3 for flight and 1.0 for landing
 
 Fp_Roll=RollBandwidth^2; % correction by reviewing the data !!!0.55*2*pi*RollBandwidth is not used !!!
 
