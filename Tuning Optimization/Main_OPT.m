@@ -5,7 +5,7 @@ clc
 addpath(genpath("lib\"))
 
 %% OPTIONS
-optimizationName = 'Piccolo_FTV3F_TAILLESS';
+optimizationName = 'Piccolo_FTV4A_36MAC';
 dev_mode = true;        %Setting this to true enables developer mode which disables some features making it faster to run the code
 % flag_optfilter = 0;     %1-Optimize DGYRO low pass filter, 0-No filter optimization of DGYRO
 % flag_noise = 1;         %0-to disable noise, 1-to enable noise
@@ -14,20 +14,20 @@ dev_mode = true;        %Setting this to true enables developer mode which disab
 %OPTIMIZATION SETTINGS
 gaopt.PopulationSize = 200;                      %Size of the population.
 gaopt.MaxGenerations = 100*gaopt.PopulationSize;  %Maximum number of iterations before the algorithm halts {100*population size}
-gaopt.MaxTime = 50*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
+gaopt.MaxTime = 5.5*60*60;            %The algorithm stops after running for MaxTime seconds {inf}
 gaopt.MaxStallTime = inf;                       %The algorithm stops if there is no improvement in the objective function for MaxStallTime seconds {inf}
 gaopt.FunctionTolerance = 1e-6;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance {1e-6}
 gaopt.MaxStallGenerations = 25;                 %The algorithm stops if the average relative change in the best fitness function value over MaxStallGenerations generations is less than or equal to FunctionTolerance.  {50}
 
 %% Simulation settings
-WithTail = 0;
-FlapConfig = 2;
+WithTail = 1;
+FlapConfig = 0;
 
 % Vehicle
-FTV                        = 3; % Vehicle Generation 
-vehicleType                = "F";
-testPlans.CG                = [ 56.61 ];
-testPlans.mass              = [ "7P" ];    
+FTV                        = 4; % Vehicle Generation 
+vehicleType                = "A";
+testPlans.CG                = [ "TBF6" ];
+testPlans.mass              = [ "MID" ];    
 testPlans.inertiaScale      = [0];         % Inertia scale
 
 testPlans.descentSlope      = [3]; % Target descent slope (deg)
@@ -40,7 +40,7 @@ testPlans.terrainOffset     = [0];     % Offset applied to sim terrain height (s
 
 % Conditions
 windSpeed = [0];                % Set of wind speeds (kts)
-windTurb  = [0.3];              % Turbulence to accompany each speed
+windTurb  = [0.5];              % Turbulence to accompany each speed
 windDir   = [0];                % Set of wind directions (WRT runway)
 testPlans.winds             = [windSpeed,windTurb,windDir];
 
@@ -85,15 +85,15 @@ end
 axis_name = {'pitch'};
 fun = @GA_tuning_function;
 
-%Parameter resolution [Kp ki kst damping]
-gain_resolution = [1/0.05 1/0.05 1/0.05 1/0.1];
+%Parameter resolution [Kp ki damping stifsness]
+gain_resolution = [1/0.01 1/0.01 1/0.01 1/0.0001];
 
 % %Parameters limit [Kp ki kd]
 % lb.roll = [0.01, 0, 0];
 % ub.roll = [2, 2, 1];
 
 lb.pitch = [1, 1, 0, 0];
-ub.pitch = [15, 20, 1, 3];
+ub.pitch = [5, 5, 2, 0.01];
 
 % lb.yaw = [0, 0, 0];
 % ub.yaw = [5, 5, 2];
@@ -145,7 +145,7 @@ for i=1:1 %Repeat optimization for all axis
 
     %Set initial parameters for optimization 
     clear Initialparam
-    Initialparam = [1.45 15.55 0.45 0];
+    Initialparam = [2.90 1.10 0.6 0.0002];
     % if flag_optfilter
     %     Initialparam(4) = dgyro_cutoff_init;
     % else

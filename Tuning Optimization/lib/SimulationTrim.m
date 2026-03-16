@@ -27,8 +27,8 @@ if ~exist('PackageFlag','var')
 end
 
 % Define name and location of FDM on fileserver     
-FDMPath     = 'R:\0080-BA-16.5PCNT BWB HWIL SIMULATION\DESIGN\5 - FDM RELEASES\'; %CfAR Fileserver FDM Store
-FDMRelease  = 46;
+FDMPath     = 'R:\0079-BA-BWB HWIL SIMULATION\DESIGN\5 - BBD FDM RELEASES\'; %CfAR Fileserver FDM Store
+FDMRelease  = 47;
 
 disp("FDM Version: " + FDMRelease)
 %% Model Configuration Parameters
@@ -42,17 +42,24 @@ if PackageFlag == 1
 end
     
 % Define Model
-if FDMRelease == 46
+if FDMRelease == 47
+    FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver47\T507Sim';
+    if modelScale == "7P"
+        FDMDLL      = 't507_7p_T507_7P_sim_Top3_51_Opt2.mexw64';
+    elseif modelScale == "16P5"
+        FDMDLL      = 't507_16p5_T507_16P5_simTop1_79_0_6_Opt2.mexw64';
+    end  
+elseif FDMRelease == 46
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver46\T507Sim';
     if modelScale == "7P"
-        FDMDLL  = 't507_7p_T507_7P_sim_Top3_51_Opt2.mexw64';
+        FDMDLL      = 't507_7p_T507_7P_sim_Top3_51_Opt2.mexw64';
     elseif modelScale == "16P5"
         FDMDLL      = 't507_16p5_T507_16P5_simTop1_77_1_3_Opt2.mexw64';
     end  
 elseif FDMRelease == 45
     FDMVer      = 'BA-BWB_Scale_Model_SimulationDLL_Ver45\T507Sim';
     if modelScale == "7P"
-        FDMDLL  = 't507_7p_T507_7P_sim_Top3_49_Opt2.mexw64';
+        FDMDLL      = 't507_7p_T507_7P_sim_Top3_49_Opt2.mexw64';
     elseif modelScale == "16P5"
         FDMDLL      = 't507_16p5_T507_16P5_simTop1_77_1_3_Opt2.mexw64';
     end  
@@ -195,13 +202,17 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
         SimObj.NUM_ITER_TO_PROPAGATE_ORDINARY_NTSTATES = 4;
         
         % FTV selection
-        if (isequal(SimObj.Param.ac_type,507.07)) && (FDMRelease >= 36)
-            SimObj.fadd('Defaults','Settings','Param.Vehicle_Type', 1); % 0 = FTV3E (default), 1 = FTV3F
+        if (isequal(SimObj.Param.ac_type,507.07) && FDMRelease >= 36)
+            SimObj.fadd('Defaults','Settings','Param.Vehicle_Type',1); % 1 = retrofitted FTV3E & FTV3F; 0 = old FTV3E
+            if FDMRelease == 46
+                SimObj.fadd('Defaults','Settings','Param.Aero_FTV3F',FTV3F_flag); % 1 = FTV3F aero data; 0 = FTV3E aero data
+                SimObj.fadd('Defaults','Settings','Param.FTV_asymmetry_mode',FTV3F_flag); % 1 = assymetry present in FTV3F; 0 = no assymetry (FTV3E)
+            end
         end
         
         % Main Gear position (16.5%)
         if (isequal(SimObj.Param.ac_type,507.16)) && (FDMRelease >= 37)
-            SimObj.fadd('Defaults','Settings','Param.Lgear_MGear_fstru_pos ',1); % 1 = fwd (74.728in)(default), 2 = neutral (76.317in)
+            SimObj.fadd('Defaults','Settings','Param.Lgear_MGear_fstru_pos ',3); % 1 = fwd (74.728in)(default), 2 = neutral (76.317in)
             % 3 = mid (78.075in), 4 = aft (81.421in)
         end
         
@@ -271,8 +282,8 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
                     SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  0);
                     SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  0);
                 else
-                    SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  15);
-                    SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  15);
+                    SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatLhCmd_Deg',  25);
+                    SimObj.fadd('Flap2Definition','Settings','Param.REFSI_FD_IN_nmodeSlatRhCmd_Deg',  25);
                 end
 
             SimObj.fclear('Flap3Definition')
@@ -307,14 +318,17 @@ DLL_Name = strcat(FDMPath,FDMVer,'\',FDMDLL);
                 SimObj.fadd('ActDelay','Settings','Param.TLAPCUDynActuatorResponseDelay',       ActuatorModel.PropulsionEDFLatency); % 0.01  
                 SimObj.fadd('ActDelay','Settings','Param.NoseGearPCUDynActuatorResponseDelay',  ActuatorModel.ActuatorHBL6625ResponseDelay); % 0.01  
 
-            elseif isequal(SimObj.Param.ac_type,507.16)
-                SimObj.fadd('ActDelay','Settings','Param.ActuatorHBL6625ResponseDelay',             ActuatorModel.ActuatorHBL6625ResponseDelay);      
-                SimObj.fadd('ActDelay','Settings','Param.ActuatorCBS20ResponseDelay',               ActuatorModel.ActuatorCBS20ResponseDelay);    
-                if FDMRelease >= 24
-                    SimObj.fadd('ActDelay','Settings','Param.NoseGearActuatorHitecSG33BLResponseDelay', ActuatorModel.ActuatorHitecSG33BLResponseDelay);        
+            elseif isequal(SimObj.Param.ac_type,507.16)    
+                if FDMRelease >= 47
+                    SimObj.fadd('ActDelay','Settings','Param.ActuatorHitecSG33BLSResponseDelay', ActuatorModel.ActuatorHitecSG33BLResponseDelay);
+                    SimObj.fadd('ActDelay','Settings','Param.ActuatorMKS6625ResponseDelay',            ActuatorModel.ActuatorMKS6625ResponseDelay);  
+                else
+                    SimObj.fadd('ActDelay','Settings','Param.ActuatorHBL6625ResponseDelay',             ActuatorModel.ActuatorHBL6625ResponseDelay);
+                    SimObj.fadd('ActDelay','Settings','Param.NoseGearActuatorHitecSG33BLResponseDelay', ActuatorModel.ActuatorHitecSG33BLResponseDelay);
+                    SimObj.fadd('ActDelay','Settings','Param.ActuatorHitecSG33BLResponseDelay',         ActuatorModel.ActuatorHitecSG33BLResponseDelay);
                 end
-                SimObj.fadd('ActDelay','Settings','Param.ActuatorCBS15ResponseDelay',               ActuatorModel.ActuatorCBS15ResponseDelay);        
-                SimObj.fadd('ActDelay','Settings','Param.ActuatorHitecSG33BLResponseDelay',         ActuatorModel.ActuatorHitecSG33BLResponseDelay);  
+                SimObj.fadd('ActDelay','Settings','Param.ActuatorCBS20ResponseDelay',               ActuatorModel.ActuatorCBS20ResponseDelay);
+                SimObj.fadd('ActDelay','Settings','Param.ActuatorCBS15ResponseDelay',               ActuatorModel.ActuatorCBS15ResponseDelay);         
                 SimObj.fadd('ActDelay','Settings','Param.BrakePCUDynActuatorResponseDelay',         ActuatorModel.BrakeLatency); 
                 SimObj.fadd('ActDelay','Settings','Param.TLAPCUDynActuatorResponseDelay',           ActuatorModel.PropulsionJetCatLatency); 
             end

@@ -12,6 +12,7 @@ SensorModel.GPSmodel.GPSNovatel7VelocityLatency_ms = 0.040;
 % SensorModel.GPSmodel.GPSUBlox6PositionLatency_ms = 0.100;
 % SensorModel.GPSmodel.GPSUBlox6VelocityLatency_ms = 0.200;
 ActuatorModel.SurfaceLatency    = 0.015 ; % Latency in seconds imposed on control surfaces Default shipped value 0.01. Note HWIL addes ~ 10ms latency
+ActuatorModel.ActuatorMKS6625ResponseDelay     = 0.0132; % Latency in seconds imposed on control actuator Default shipped value 0.0132
 ActuatorModel.ActuatorHBL6625ResponseDelay     = 0.015 ;% Latency in seconds imposed on control actuator Default shipped value 0.0132
 ActuatorModel.ActuatorCBS20ResponseDelay       = 0.018; % Latency in seconds imposed on control actuator Default shipped value 0.0180
 ActuatorModel.ActuatorCBS15ResponseDelay       = 0.018; % Latency in seconds imposed on control actuator Default shipped value 0.0180

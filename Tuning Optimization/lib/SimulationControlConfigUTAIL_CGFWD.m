@@ -19,6 +19,15 @@ disp("Gains: " + PiccoloGainVersion)
 CLAWs_On = 0; % We elect to disable internal BA CLaws for now...    
 dt = 0.02; %Control model loop update rate is controlled by this step. use 20ms for Piccolo 
 
+% Use to control Piccolo states. Set to 1 for flight modes. Set to 0 to use
+% landing modes. This can be set conditionally during simulation
+% eventually.
+inFlight = 1;
+AltCruise_m = testPlans(testIndx).terrainElevation * 0.3048 + 152; % Climb to 500ft AGL
+
+% Longitudinal Control Mode (0 == Alt Priority, 1 == Airspeed Priority)
+LonMode = 0;
+
 %% Control Allocation Configuration
 ControlAllocation = "M2"; % Mixing Matrix M8 for tailless
 
@@ -179,7 +188,7 @@ TurnDerivativeLPFcutoff = TurnErrLPFcutoff;
 Fp_TurnDerr             = 0.55*2*pi*TurnDerivativeLPFcutoff;
 
 %% Bank to Roll Rate Cmd
-RollBandwidth = 1.0; %Hz;1.2
+RollBandwidth   = 1.3; %Hz;Original Value 1.1 228b bug fixes this value to 1.3 for flight and 1.0 for landing
 
 RollMaxAccel = 0.8; %rad/s^2
 

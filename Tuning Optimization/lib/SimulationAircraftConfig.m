@@ -61,7 +61,7 @@ end
         elseif(vehicleType == "E")
             FTV3E % Echo
         elseif(vehicleType == "F")
-            FTV3F % Foxtrot config script
+            FTV3F % Echo config script
             FTV3F_flag = 1; 
         else
             error("Unsupported Gen 3 model!");
